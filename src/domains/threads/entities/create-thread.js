@@ -12,7 +12,7 @@ export class CreateThread {
    * @param {Payload} payload
    */
 	constructor(payload) {
-		const {title, body} = this.#verifyPayload(payload);
+		const {title, body} = this.#validatePayload(payload);
 
 		this.title = title;
 		this.body = body;
@@ -22,7 +22,7 @@ export class CreateThread {
    * @param {Payload} payload
    * @returns {{ title: string; body: string }}
    */
-	#verifyPayload({title, body}) {
+	#validatePayload({title, body}) {
 		if (!title || !body) {
 			throw new Error('CREATE_THREAD.NOT_MEET_REQUIRED_PROPERTIES');
 		}
