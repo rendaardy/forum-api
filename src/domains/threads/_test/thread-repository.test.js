@@ -15,11 +15,11 @@ describe('ThreadRepository interface', () => {
 			content: 'a comment',
 		});
 
-		await expect(repository.addThread(createThread)).rejects
+		await expect(repository.addThread('user-123', createThread)).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-		await expect(repository.addComment('thread-123', createComment)).rejects
+		await expect(repository.addComment('user-123', 'thread-123', createComment)).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-		await expect(repository.removeComment('comment-123')).rejects
+		await expect(repository.removeComment('user-123', 'comment-123')).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 		await expect(repository.getDetailedThread('thread-123')).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
