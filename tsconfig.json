@@ -22,6 +22,7 @@
       "#commons/exceptions/*": ["src/commons/exceptions/*"],
       "#domains/users/*": ["src/domains/users/*"],
       "#domains/authentications/*": ["src/domains/authentications/*"],
+      "#domains/threads/*": ["src/domains/threads/*"],
       "#applications/security/*": ["src/applications/security/*"],
       "#applications/usecase/*": ["src/applications/usecase/*"]
     },

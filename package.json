@@ -15,6 +15,7 @@
     "#commons/exceptions/*.js": "./src/commons/exceptions/*.js",
     "#domains/users/*.js": "./src/domains/users/*.js",
     "#domains/authentications/*.js": "./src/domains/authentications/*.js",
+    "#domains/threads/*.js": "./src/domains/threads/*.js",
     "#applications/security/*.js": "./src/applications/security/*.js",
     "#applications/usecase/*.js": "./src/applications/usecase/*.js"
   },
