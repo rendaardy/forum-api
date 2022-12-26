@@ -37,7 +37,7 @@ export class DetailedComment {
 
 		if (typeof id !== 'string'
       || typeof username !== 'string'
-      || typeof date !== 'string'
+      || !(date instanceof Date)
       || typeof content !== 'string') {
 			throw new Error('DETAILED_COMMENT.TYPE_MISMATCH');
 		}

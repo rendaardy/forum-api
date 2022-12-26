@@ -27,7 +27,7 @@ describe('A DetailedComment entity', () => {
 		const payload = {
 			id: 'comment-123',
 			username: 'dicoding',
-			date: '2021-08-08T07:22:33.555Z',
+			date: new Date(),
 			content: 'a comment',
 		};
 

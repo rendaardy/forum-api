@@ -8,7 +8,7 @@ describe('A DetailedThread entity', () => {
 		const payload = {
 			id: 'thread-123',
 			title: 'a thread',
-			date: '2022-08-08T07:19:09.775Z',
+			date: new Date(),
 			username: 'dicoding',
 		};
 
@@ -33,12 +33,12 @@ describe('A DetailedThread entity', () => {
 			id: 'thread-123',
 			title: 'a thread',
 			body: 'thread body',
-			date: '2022-08-08T07:19:22.775Z',
+			date: new Date(),
 			username: 'dicoding',
 			comments: [
 				{
 					id: 'comment-123',
-					date: '2022-08-08T08:00:19.775Z',
+					date: new Date(),
 					content: 'a comment',
 				},
 			],
@@ -52,13 +52,13 @@ describe('A DetailedThread entity', () => {
 			id: 'thread-123',
 			title: 'a thread',
 			body: 'thread body',
-			date: '2022-08-08T07:19:22.775Z',
+			date: new Date(),
 			username: 'dicoding',
 			comments: [
 				{
 					id: false,
 					username: 123,
-					date: '2022-08-08T08:00:19.775Z',
+					date: new Date(),
 					content: 'a comment',
 				},
 			],
@@ -72,13 +72,13 @@ describe('A DetailedThread entity', () => {
 			id: 'thread-123',
 			title: 'a thread',
 			body: 'thread body',
-			date: '2022-08-08T07:19:22.775Z',
+			date: new Date(),
 			username: 'dicoding',
 			comments: [
 				{
 					id: 'comment-123',
 					username: 'johndoe',
-					date: '2022-08-08T08:00:19.775Z',
+					date: new Date(),
 					content: 'a comment',
 				},
 			],

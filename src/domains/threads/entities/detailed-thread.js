@@ -39,7 +39,6 @@ export class DetailedThread {
 
 	/**
    * @param {Payload} payload
-   * @returns {{ id: string; title: string; body: string; date: string; username: string; comments: Array<any> }}
    */
 	#validatePayload(payload) {
 		const {id, title, body, date, username, comments} = payload;
@@ -56,7 +55,7 @@ export class DetailedThread {
 		if (typeof id !== 'string'
       || typeof title !== 'string'
       || typeof body !== 'string'
-      || typeof date !== 'string'
+      || !(date instanceof Date)
       || typeof username !== 'string'
       || !(comments instanceof Array)) {
 			throw new Error('DETAILED_THREAD.TYPE_MISMATCH');

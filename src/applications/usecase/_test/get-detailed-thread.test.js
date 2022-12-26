@@ -16,19 +16,19 @@ describe('GetDetailedThread usecase', () => {
 			id: threadId,
 			title: 'a thread',
 			body: 'thread body',
-			date: '2022-08-08T08:10:29.775Z',
+			date: new Date(),
 			username: 'dicoding',
 			comments: [
 				{
 					id: 'comment-123',
 					username: 'alice',
-					date: '2022-08-08T10:00:11.775Z',
+					date: new Date(),
 					content: 'a comment',
 				},
 				{
 					id: 'comment-345',
 					username: 'bob',
-					date: '2022-08-08T12:30:22.775Z',
+					date: new Date(),
 					content: '**this comment has been deleted**',
 				},
 			],
