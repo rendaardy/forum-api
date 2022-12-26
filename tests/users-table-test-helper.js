@@ -30,6 +30,6 @@ export class UsersTableTestHelper {
 	}
 
 	static async clearTable() {
-		await pool.query('TRUNCATE TABLE users');
+		await pool.query('TRUNCATE TABLE users CASCADE');
 	}
 }
