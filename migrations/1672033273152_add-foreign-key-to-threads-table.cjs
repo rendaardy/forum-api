@@ -3,7 +3,7 @@
  * @param {import("node-pg-migrate").MigrationBuilder} pgm
  */
 exports.up = pgm => {
-  pgm.addConstraint("threads", "threads.user_id.fkey", "FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE");
+	pgm.addConstraint('threads', 'threads.user_id.fkey', 'FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE');
 };
 
 /**
@@ -11,5 +11,5 @@ exports.up = pgm => {
  * @param {import("node-pg-migrate").MigrationBuilder} pgm
  */
 exports.down = pgm => {
-  pgm.dropConstraint("threads", "threads.user_id.fkey");
+	pgm.dropConstraint('threads', 'threads.user_id.fkey');
 };
