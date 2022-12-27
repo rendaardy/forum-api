@@ -19,6 +19,7 @@ specifiers:
   eslint-config-xo-typescript: ^0.55.1
   hapi-pino: ^11.0.1
   inversify: ^6.0.1
+  inversify-vanillajs-helpers: ^2.0.0
   jest: ^29.3.1
   joi: ^17.7.0
   nanoid: ^4.0.0
@@ -37,6 +38,7 @@ dependencies:
   dotenv: 16.0.3
   hapi-pino: 11.0.1
   inversify: 6.0.1
+  inversify-vanillajs-helpers: 2.0.0
   joi: 17.7.0
   nanoid: 4.0.0
   pg: 8.8.0
@@ -2613,6 +2615,16 @@ packages:
 
   /inherits/2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
+
+  /inversify-vanillajs-helpers/2.0.0:
+    resolution: {integrity: sha512-V6byp3lESaYENKPbkL0OgXsx7gz7jIMOHQUvmK3xt1wLFys2l+70JBj401M23o8/u/oI+2Y34OHyDWTUjJQqYA==}
+    dependencies:
+      inversify: 3.3.0
+    dev: false
+
+  /inversify/3.3.0:
+    resolution: {integrity: sha512-svE1817ySTTd7FE8wGEccesDLWF2/QnQYnIkYH14HrmCSIPcagJ2waQkIj7dZbrhm39MKbzWjxcdv1qQ9E9hTw==}
+    dev: false
 
   /inversify/6.0.1:
     resolution: {integrity: sha512-B3ex30927698TJENHR++8FfEaJGqoWOgI6ZY5Ht/nLUsFCwHn6akbwtnUAPCgUepAnTpe2qHxhDNjoKLyz6rgQ==}

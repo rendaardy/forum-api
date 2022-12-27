@@ -4,7 +4,8 @@ import 'reflect-metadata';
 
 import {env} from 'node:process';
 
-import {decorate, inject, injectable, Container, ContainerModule} from 'inversify';
+import {Container, ContainerModule} from 'inversify';
+import {helpers} from 'inversify-vanillajs-helpers';
 import {nanoid} from 'nanoid';
 import bcrypt from 'bcrypt';
 import hapiJwt from '@hapi/jwt';
@@ -36,47 +37,23 @@ export const Types = {
 };
 
 // Interfaces
-decorate(injectable(), UserRepository);
-decorate(injectable(), PasswordHash);
-decorate(injectable(), AuthenticationRepository);
-decorate(injectable(), AuthTokenManager);
+helpers.annotate(UserRepository);
+helpers.annotate(PasswordHash);
+helpers.annotate(AuthenticationRepository);
+helpers.annotate(AuthTokenManager);
 
 // Implementations
-decorate(injectable(), BcryptPasswordHash);
-decorate(inject(Types.Bcrypt), BcryptPasswordHash, 0);
-
-decorate(injectable(), JwtTokenManager);
-decorate(inject(Types.Jwt), JwtTokenManager, 0);
-decorate(inject(Types.AccessTokenKey), JwtTokenManager, 1);
-decorate(inject(Types.RefreshTokenKey), JwtTokenManager, 2);
-
-decorate(injectable(), UserRepositoryPostgres);
-decorate(inject(Types.Postgres), UserRepositoryPostgres, 0);
-decorate(inject(Types.NanoId), UserRepositoryPostgres, 1);
-
-decorate(injectable(), AuthenticationRepositoryPostgres);
-decorate(inject(Types.Postgres), AuthenticationRepositoryPostgres, 0);
+helpers.annotate(BcryptPasswordHash, [Types.Bcrypt]);
+helpers.annotate(JwtTokenManager, [Types.Jwt, Types.AccessTokenKey, Types.RefreshTokenKey]);
+helpers.annotate(UserRepositoryPostgres, [Types.Postgres, Types.NanoId]);
+helpers.annotate(AuthenticationRepositoryPostgres, [Types.Postgres]);
 
 // Usecases
-decorate(injectable(), AddUser);
-decorate(inject(UserRepository), AddUser, 0);
-decorate(inject(PasswordHash), AddUser, 1);
-
-decorate(injectable(), LoginUser);
-decorate(inject(UserRepository), LoginUser, 0);
-decorate(inject(AuthenticationRepository), LoginUser, 1);
-decorate(inject(AuthTokenManager), LoginUser, 2);
-decorate(inject(PasswordHash), LoginUser, 3);
-
-decorate(injectable(), LogoutUser);
-decorate(inject(AuthenticationRepository), LogoutUser, 0);
-
-decorate(injectable(), RefreshAuth);
-decorate(inject(AuthenticationRepository), RefreshAuth, 0);
-decorate(inject(AuthTokenManager), RefreshAuth, 1);
-
-decorate(injectable(), DeleteAuth);
-decorate(inject(AuthenticationRepository), DeleteAuth, 0);
+helpers.annotate(AddUser, [UserRepository, PasswordHash]);
+helpers.annotate(LoginUser, [UserRepository, AuthenticationRepository, AuthTokenManager, PasswordHash]);
+helpers.annotate(LogoutUser, [AuthenticationRepository]);
+helpers.annotate(RefreshAuth, [AuthenticationRepository, AuthTokenManager]);
+helpers.annotate(DeleteAuth, [AuthenticationRepository]);
 
 const thirdPartyModule = new ContainerModule(bind => {
 	bind(Types.Bcrypt).toConstantValue(bcrypt);
