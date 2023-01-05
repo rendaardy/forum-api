@@ -5,12 +5,12 @@
  * @param {import("node-pg-migrate").MigrationBuilder} pgm
  */
 exports.up = pgm => {
-  pgm.addColumn("comments", {
-    comment_id: {
-      type: "VARCHAR(50)",
-      notNull: false,
-    },
-  });
+	pgm.addColumn('comments', {
+		comment_id: {
+			type: 'VARCHAR(50)',
+			notNull: false,
+		},
+	});
 };
 
 /**
@@ -18,5 +18,5 @@ exports.up = pgm => {
  * @param {import("node-pg-migrate").MigrationBuilder} pgm
  */
 exports.down = pgm => {
-  pgm.dropColumn("comments", "comment_id");
+	pgm.dropColumn('comments', 'comment_id');
 };
