@@ -14,6 +14,14 @@ export class DomainErrorTranslator {
 		['REFRESH_AUTHENTICATION_USECASE.TYPE_MISMATCH', new InvariantError('refresh token must be of type string')],
 		['DELETE_AUTHENTICATION_USECASE.NOT_CONTAIN_REFRESH_TOKEN', new InvariantError('refresh token is required')],
 		['DELETE_AUTHENTICATION_USECASE.TYPE_MISMATCH', new InvariantError('refresh token must be of type string')],
+		['CREATED_THREAD.NOT_MEET_REQUIRED_PROPERTIES', new InvariantError('Failed to create a new thread. Missing the required properties')],
+		['CREATED_THREAD.TYPE_MISMATCH', new InvariantError('Failed to create a new thread. Type mismatch')],
+		['CREATED_COMMENT.NOT_MEET_REQUIRED_PROPERTIES', new InvariantError('Failed to create a new comment. Missing the required properties')],
+		['CREATED_COMMENT.TYPE_MISMATCH', new InvariantError('Failed to create a new comment. Type mismatch')],
+		['DETAILED_THREAD.NOT_MEET_REQUIRED_PROPERTIES', new InvariantError('Failed to get detailed thread. Missing the required properties')],
+		['DETAILED_THREAD.TYPE_MISMATCH', new InvariantError('Failed to get detailed thread. Type mismatch')],
+		['DETAILED_COMMENT.NOT_MEET_REQUIRED_PROPERTIES', new InvariantError('Failed to get detailed comment. Missing the required properties')],
+		['DETAILED_COMMENT.TYPE_MISMATCH', new InvariantError('Failed to get detailed comment. Type mismatch')],
 	]);
 
 	/**
