@@ -53,52 +53,60 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
    * @returns {Promise<import("#domains/threads/entities/created-comment.js").CreatedComment>}
    */
 	async addComment(userId, threadId, createComment) {
+		let result = await this.#pool.query({
+			text: 'SELECT id FROM threads WHERE id = $1',
+			values: [threadId],
+		});
+
+		if (result.rowCount <= 0) {
+			throw new NotFoundError('Failed to add a new comment. Thread not found');
+		}
+
 		const commentId = `comment-${this.#idGenerator()}`;
 		const query = {
 			text: 'INSERT INTO comments(id, user_id, reply_to, content) VALUES ($1, $2, $3, $4) RETURNING id, content, user_id AS owner',
 			values: [commentId, userId, threadId, createComment.content],
 		};
-		const result = await this.#pool.query(query);
+		result = await this.#pool.query(query);
 
 		return new CreatedComment({...result.rows[0]});
 	}
 
 	/**
    * @param {string} userId
+   * @param {string} threadId
    * @param {string} commentId
    * @returns {Promise<void>}
    */
-	async removeComment(userId, commentId) {
-		const client = await this.#pool.connect();
+	async removeComment(userId, threadId, commentId) {
+		let result = await this.#pool.query({
+			text: `
+                SELECT 
+                    comments.id AS comment_id,
+                    comments.user_id 
+                FROM threads 
+                LEFT JOIN comments ON threads.id = comments.reply_to 
+                WHERE threads.id = $1
+            `,
+			values: [threadId],
+		});
 
-		try {
-			await client.query('BEGIN');
-
-			let result = await client.query({
-				text: 'SELECT user_id FROM comments WHERE id = $1',
-				values: [commentId],
-			});
-
-			if (result.rowCount <= 0) {
-				throw new NotFoundError('Failed to remove a comment. Comment not found');
-			}
-
-			if (result.rows[0].user_id !== userId) {
-				throw new AuthorizationError('You\'re prohibited to get access of this resource');
-			}
-
-			result = await client.query({
-				text: 'UPDATE comments SET is_deleted = $1 WHERE id = $2',
-				values: [true, commentId],
-			});
-
-			await client.query('COMMIT');
-		} catch (error) {
-			await client.query('ROLLBACK');
-			throw error;
-		} finally {
-			client.release();
+		if (result.rowCount <= 0) {
+			throw new NotFoundError('Failed to remove a comment. Thread not found');
 		}
+
+		if (result.rows[0].comment_id !== commentId) {
+			throw new NotFoundError('Failed to remove a comment. Comment not found');
+		}
+
+		if (result.rows[0].user_id !== userId) {
+			throw new AuthorizationError('You\'re prohibited to get access of this resource');
+		}
+
+		result = await this.#pool.query({
+			text: 'UPDATE comments SET is_deleted = $1 WHERE id = $2',
+			values: [true, commentId],
+		});
 	}
 
 	/**

@@ -23,10 +23,11 @@ export class ThreadRepository {
 
 	/**
    * @param {string} _userId
+   * @param {string} _threadId
    * @param {string} _commentId
    * @returns {Promise<void>}
    */
-	async removeComment(_userId, _commentId) {
+	async removeComment(_userId, _threadId, _commentId) {
 		throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 	}
 

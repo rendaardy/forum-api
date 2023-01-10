@@ -134,24 +134,31 @@ describe('ThreadRepositoryPostgres', () => {
 			});
 		});
 
+		it('should throw an error when thread isn\'t found', async () => {
+			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
+
+			await expect(() => threadRepository.removeComment('user-abc123', 'thread-abc', 'comment-abc123'))
+				.rejects.toThrowError('Failed to remove a comment. Thread not found');
+		});
+
 		it('should throw an error when comment isn\'t found', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
-			await expect(() => threadRepository.removeComment('user-abc123', 'comment-abc'))
+			await expect(() => threadRepository.removeComment('user-abc123', 'thread-abc123', 'comment-abc'))
 				.rejects.toThrowError('Failed to remove a comment. Comment not found');
 		});
 
 		it('should throw an error when a user wants to remove whose comment isn\'t owned', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
-			await expect(() => threadRepository.removeComment('user-abc', 'comment-abc123'))
+			await expect(() => threadRepository.removeComment('user-abc', 'thread-abc123', 'comment-abc123'))
 				.rejects.toThrowError('You\'re prohibited to get access of this resource');
 		});
 
 		it('should be doing soft-delete a comment from the database', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
-			await threadRepository.removeComment('user-abc123', 'comment-abc123');
+			await threadRepository.removeComment('user-abc123', 'thread-abc123', 'comment-abc123');
 
 			const comments = await ThreadsTableTestHelper.findCommentById('comment-abc123');
 			expect(comments[0].is_deleted).toBeTruthy();
@@ -218,7 +225,7 @@ describe('ThreadRepositoryPostgres', () => {
 		it('should return detailed thread with 1 comment deleted', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
-			await threadRepository.removeComment('user-abc234', 'comment-abc123');
+			await threadRepository.removeComment('user-abc234', 'thread-abc123', 'comment-abc123');
 			const detailedThread = await threadRepository.getDetailedThread('thread-abc123');
 
 			expect(detailedThread).toStrictEqual(new DetailedThread({
