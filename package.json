@@ -12,6 +12,7 @@
     "#infrastructures/security/*.js": "./src/infrastructures/security/*.js",
     "#infrastructures/http/*.js": "./src/infrastructures/http/*.js",
     "#infrastructures/container": "./src/infrastructures/container.js",
+    "#infrastructures/config": "./src/infrastructures/config.js",
     "#commons/exceptions/*.js": "./src/commons/exceptions/*.js",
     "#domains/users/*.js": "./src/domains/users/*.js",
     "#domains/authentications/*.js": "./src/domains/authentications/*.js",

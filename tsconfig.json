@@ -19,6 +19,7 @@
       "#infrastructures/security/*": ["src/infrastructures/security/*"],
       "#infrastructures/http/*": ["src/infrastructures/http/*"],
       "#infrastructures/container": ["src/infrastructures/container.js"],
+      "#infrastructures/config": ["src/infrastructures/config.js"],
       "#commons/exceptions/*": ["src/commons/exceptions/*"],
       "#domains/users/*": ["src/domains/users/*"],
       "#domains/authentications/*": ["src/domains/authentications/*"],

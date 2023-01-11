@@ -1,5 +1,3 @@
-import {env} from 'node:process';
-
 import {server as hapiServer} from '@hapi/hapi';
 import hapiPino from 'hapi-pino';
 import hapiJwt from '@hapi/jwt';
@@ -8,6 +6,7 @@ import {usersPlugin} from '#interfaces/http/api/users/plugin.js';
 import {authPlugin} from '#interfaces/http/api/authentications/plugin.js';
 import {DomainErrorTranslator} from '#commons/exceptions/domain-error-translator.js';
 import {ClientError} from '#commons/exceptions/client-error.js';
+import {config} from '#infrastructures/config';
 
 /**
  * @param {import("inversify").Container} container
@@ -15,8 +14,8 @@ import {ClientError} from '#commons/exceptions/client-error.js';
  */
 export async function createServer(container) {
 	const server = hapiServer({
-		host: env.HOST,
-		port: env.PORT,
+		host: config.http.host,
+		port: config.http.port,
 		debug: false,
 	});
 
