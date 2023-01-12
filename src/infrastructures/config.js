@@ -12,5 +12,6 @@ export const config = {
 	jwt: {
 		accessTokenKey: env.ACCESS_TOKEN_KEY,
 		refreshTokenKey: env.REFRESH_TOKEN_KEY,
+		tokenAge: env.TOKEN_AGE,
 	},
 };

@@ -59,7 +59,7 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
 		});
 
 		if (result.rowCount <= 0) {
-			throw new NotFoundError('Failed to add a new comment. Thread not found');
+			throw new NotFoundError('Failed to create a new comment. Thread not found');
 		}
 
 		const commentId = `comment-${this.#idGenerator()}`;

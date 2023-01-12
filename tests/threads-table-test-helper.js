@@ -55,6 +55,16 @@ export class ThreadsTableTestHelper {
 		return result.rows;
 	}
 
+	/**
+     * @param {string} id
+     */
+	static async removeCommentById(id) {
+		await pool.query({
+			text: 'UPDATE comments SET is_deleted = true WHERE id = $1',
+			values: [id],
+		});
+	}
+
 	static async clearTable() {
 		await pool.query('TRUNCATE TABLE threads CASCADE');
 		await pool.query('TRUNCATE TABLE comments CASCADE');

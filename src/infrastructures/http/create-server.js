@@ -4,6 +4,7 @@ import hapiJwt from '@hapi/jwt';
 
 import {usersPlugin} from '#interfaces/http/api/users/plugin.js';
 import {authPlugin} from '#interfaces/http/api/authentications/plugin.js';
+import {threadsPlugin} from '#interfaces/http/api/threads/plugin.js';
 import {DomainErrorTranslator} from '#commons/exceptions/domain-error-translator.js';
 import {ClientError} from '#commons/exceptions/client-error.js';
 import {config} from '#infrastructures/config';
@@ -33,6 +34,25 @@ export async function createServer(container) {
 		},
 	]);
 
+	server.auth.strategy('forum-api_jwt', 'jwt', {
+		keys: config.jwt.accessTokenKey,
+		verify: {
+			aud: false,
+			iss: false,
+			sub: false,
+			maxAgeSec: config.jwt.tokenAge,
+		},
+		validate(artifacts, _request, _h) {
+			return {
+				isValid: true,
+				credentials: {
+					id: artifacts.decoded.payload.id,
+					username: artifacts.decoded.payload.username,
+				},
+			};
+		},
+	});
+
 	await server.register([
 		{
 			plugin: usersPlugin,
@@ -40,6 +60,10 @@ export async function createServer(container) {
 		},
 		{
 			plugin: authPlugin,
+			options: {container},
+		},
+		{
+			plugin: threadsPlugin,
 			options: {container},
 		},
 	]);
