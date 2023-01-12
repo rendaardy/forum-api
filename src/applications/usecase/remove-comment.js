@@ -13,12 +13,13 @@ export class RemoveComment {
 
 	/**
    * @param {string} username
+     * @param {string} threadId
    * @param {string} commentId
    * @returns {Promise<void>}
    */
-	async execute(username, commentId) {
+	async execute(username, threadId, commentId) {
 		const userId = await this.#userRepository.getIdByUsername(username);
 
-		await this.#threadRepository.removeComment(userId, commentId);
+		await this.#threadRepository.removeComment(userId, threadId, commentId);
 	}
 }
