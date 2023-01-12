@@ -30,6 +30,6 @@ describe('RemoveComment usecase', () => {
 		await removeComment.execute(username, threadId, commentId);
 
 		expect(mockUserRepository.getIdByUsername).toHaveBeenCalledWith(username);
-		expect(mockThreadRepository.removeComment).toHaveBeenCalledWith(userId, commentId);
+		expect(mockThreadRepository.removeComment).toHaveBeenCalledWith(userId, threadId, commentId);
 	});
 });
