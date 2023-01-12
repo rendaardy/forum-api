@@ -13,6 +13,7 @@ describe('RemoveComment usecase', () => {
 	it('should orchestrate the remove comment usecase correctly', async () => {
 		const username = 'dicoding';
 		const userId = 'user-123';
+        const threadId = 'thread-123';
 		const commentId = 'comment-123';
 		const mockUserRepository = new UserRepository();
 		const mockThreadRepository = new ThreadRepository();
@@ -26,7 +27,7 @@ describe('RemoveComment usecase', () => {
 
 		const removeComment = new RemoveComment(mockUserRepository, mockThreadRepository);
 
-		await removeComment.execute(username, commentId);
+		await removeComment.execute(username, threadId, commentId);
 
 		expect(mockUserRepository.getIdByUsername).toHaveBeenCalledWith(username);
 		expect(mockThreadRepository.removeComment).toHaveBeenCalledWith(userId, commentId);
