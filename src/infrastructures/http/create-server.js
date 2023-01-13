@@ -74,7 +74,7 @@ export async function createServer(container) {
 		if (response instanceof Error) {
 			const translatedError = DomainErrorTranslator.translate(response);
 			// @ts-ignore
-			request.logger.info(response.message);
+			request.logger.error(response.message);
 
 			if (translatedError instanceof ClientError) {
 				const newResponse = h.response({
