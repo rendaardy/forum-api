@@ -1,3 +1,5 @@
+/* c8 ignore start */
+
 import {pool} from '#infrastructures/database/postgres/pool.js';
 
 export class AuthenticationsTableTestHelper {
@@ -30,3 +32,5 @@ export class AuthenticationsTableTestHelper {
 		await pool.query('TRUNCATE TABLE authentications');
 	}
 }
+
+/* c8 ignore stop */

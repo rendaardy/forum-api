@@ -1,3 +1,5 @@
+/* c8 ignore start */
+
 import {pool} from '#infrastructures/database/postgres/pool.js';
 
 export class UsersTableTestHelper {
@@ -33,3 +35,5 @@ export class UsersTableTestHelper {
 		await pool.query('TRUNCATE TABLE users CASCADE');
 	}
 }
+
+/* c8 ignore stop */

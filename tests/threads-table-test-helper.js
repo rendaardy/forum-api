@@ -1,3 +1,5 @@
+/* c8 ignore start */
+
 import {pool} from '#infrastructures/database/postgres/pool.js';
 
 export class ThreadsTableTestHelper {
@@ -85,3 +87,5 @@ export class ThreadsTableTestHelper {
 		await pool.query('TRUNCATE TABLE comments CASCADE');
 	}
 }
+
+/* c8 ignore stop */
