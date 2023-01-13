@@ -22,7 +22,7 @@
   },
   "scripts": {
     "start": "node ./src/main.js",
-    "start:dev": "tsx watch ./src/main.js | pino-pretty",
+    "start:dev": "tsx watch --clear-screen=false ./src/main.js | pino-pretty",
     "migrate": "node-pg-migrate",
     "migrate:test": "node-pg-migrate -f ./config/database/test.json",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
