@@ -439,6 +439,381 @@ describe('/threads endpoint', () => {
 		});
 	});
 
+	describe('POST /threads/{threadId}/comments/{commentId}/replies', () => {
+		let accessToken = '';
+		let refreshToken = '';
+		/** @type {string} */
+		let threadId;
+		/** @type {string} */
+		let commentId;
+
+		beforeEach(async () => {
+			// Login with dicoding username
+			let authResponse = await server.inject({
+				url: '/authentications',
+				method: 'POST',
+				payload: {
+					username: 'dicoding',
+					password: 'secret_password',
+				},
+			});
+			let authJson = JSON.parse(authResponse.payload);
+			accessToken = authJson.data.accessToken;
+			refreshToken = authJson.data.refreshToken;
+
+			// Create a new thread using dicoding username
+			let response = await server.inject({
+				url: '/threads',
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+				payload: {
+					title: 'a thread',
+					body: 'a thread body',
+				},
+			});
+			let json = JSON.parse(response.payload);
+			threadId = json.data.addedThread.id;
+
+			// Logout
+			await server.inject({
+				url: '/authentications',
+				method: 'DELETE',
+				payload: {
+					refreshToken,
+				},
+			});
+
+			accessToken = '';
+			refreshToken = '';
+
+			// Login with alice username to create a new comment
+			authResponse = await server.inject({
+				url: '/authentications',
+				method: 'POST',
+				payload: {
+					username: 'alice',
+					password: 'secret_password',
+				},
+			});
+			authJson = JSON.parse(authResponse.payload);
+			accessToken = authJson.data.accessToken;
+			refreshToken = authJson.data.refreshToken;
+
+			// Create a new comment using alice username
+			response = await server.inject({
+				url: `/threads/${threadId}/comments`,
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+				payload: {
+					content: 'a comment',
+				},
+			});
+			json = JSON.parse(response.payload);
+			commentId = json.data.addedComment.id;
+		});
+
+		afterEach(async () => {
+			// Logout
+			await server.inject({
+				url: '/authentications',
+				method: 'DELETE',
+				payload: {
+					refreshToken,
+				},
+			});
+
+			accessToken = '';
+			refreshToken = '';
+			threadId = '';
+			commentId = '';
+		});
+
+		it('should return response code 201 and payload successfully', async () => {
+			const response = await server.inject({
+				url: `/threads/${threadId}/comments/${commentId}/replies`,
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+				payload: {
+					content: 'a reply comment',
+				},
+			});
+
+			const jsonResponse = JSON.parse(response.payload);
+			expect(response.statusCode).toEqual(201);
+			expect(jsonResponse.status).toEqual('success');
+			expect(jsonResponse.data.addedReply).toBeDefined();
+		});
+
+		it('should return response code 400 when the request payload doesn\'t meet the required properties', async () => {
+			const response = await server.inject({
+				url: `/threads/${threadId}/comments/${commentId}/replies`,
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+				payload: {},
+			});
+
+			const jsonResponse = JSON.parse(response.payload);
+			expect(response.statusCode).toEqual(400);
+			expect(jsonResponse.status).toEqual('fail');
+			expect(jsonResponse.message).toEqual('Failed to create a new comment. Missing the required properties');
+		});
+
+		it('should return response code 400 when the request payload has type mismatch', async () => {
+			const response = await server.inject({
+				url: `/threads/${threadId}/comments/${commentId}/replies`,
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+				payload: {
+					content: 123,
+				},
+			});
+
+			const jsonResponse = JSON.parse(response.payload);
+			expect(response.statusCode).toEqual(400);
+			expect(jsonResponse.status).toEqual('fail');
+			expect(jsonResponse.message).toEqual('Failed to create a new comment. Type mismatch');
+		});
+
+		it('should return response code 401 when the user tries to create a new reply before authenticate itself', async () => {
+			const response = await server.inject({
+				url: `/threads/${threadId}/comments/${commentId}/replies`,
+				method: 'POST',
+				payload: {
+					content: 'a reply comment',
+				},
+			});
+
+			expect(response.statusCode).toEqual(401);
+		});
+
+		it('should return response code 404 when the user tries to create a new reply in a non-existing thread', async () => {
+			const response = await server.inject({
+				url: `/threads/thread-abc123/comments/${commentId}/replies`,
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+				payload: {
+					content: 'a reply comment',
+				},
+			});
+
+			const jsonResponse = JSON.parse(response.payload);
+			expect(response.statusCode).toEqual(404);
+			expect(jsonResponse.status).toEqual('fail');
+			expect(jsonResponse.message).toEqual('Failed to create a new reply. Thread not found');
+		});
+
+		it('should return response code 404 when the user tries to create a new reply in a non-existing comment', async () => {
+			const response = await server.inject({
+				url: `/threads/${threadId}/comments/comment-abc/replies`,
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+				payload: {
+					content: 'a reply comment',
+				},
+			});
+
+			const jsonResponse = JSON.parse(response.payload);
+			expect(response.statusCode).toEqual(404);
+			expect(jsonResponse.status).toEqual('fail');
+			expect(jsonResponse.message).toEqual('Failed to create a new reply. Comment not found');
+		});
+	});
+
+	describe('DELETE /threads/{threadId}/comments/{commentId}/replies/{replyId}', () => {
+		let accessToken = '';
+		let refreshToken = '';
+		/** @type {string} */
+		let threadId;
+		/** @type {string} */
+		let commentId;
+		/** @type {string} */
+		let replyId;
+
+		beforeEach(async () => {
+			// Login with dicoding username
+			const authResponse = await server.inject({
+				url: '/authentications',
+				method: 'POST',
+				payload: {
+					username: 'dicoding',
+					password: 'secret_password',
+				},
+			});
+			const authJson = JSON.parse(authResponse.payload);
+			accessToken = authJson.data.accessToken;
+			refreshToken = authJson.data.refreshToken;
+
+			// Create a new thread using dicoding username
+			const threadResponse = await server.inject({
+				url: '/threads',
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+				payload: {
+					title: 'a thread',
+					body: 'a thread body',
+				},
+			});
+			let json = JSON.parse(threadResponse.payload);
+			threadId = json.data.addedThread.id;
+
+			// Create a new comment using dicoding username
+			const commentResponse = await server.inject({
+				url: `/threads/${threadId}/comments`,
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+				payload: {
+					content: 'a comment',
+				},
+			});
+
+			json = JSON.parse(commentResponse.payload);
+			commentId = json.data.addedComment.id;
+
+			// Create a new reply using dicoding username
+			const replyResponse = await server.inject({
+				url: `/threads/${threadId}/comments/${commentId}/replies`,
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+				payload: {
+					content: 'a reply comment',
+				},
+			});
+
+			json = JSON.parse(replyResponse.payload);
+			replyId = json.data.addedReply.id;
+		});
+
+		afterEach(async () => {
+			// Logout
+			await server.inject({
+				url: '/authentications',
+				method: 'DELETE',
+				payload: {
+					refreshToken,
+				},
+			});
+
+			accessToken = '';
+			refreshToken = '';
+			threadId = '';
+			commentId = '';
+		});
+
+		it('should return response code 200 successfully', async () => {
+			const response = await server.inject({
+				url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+				method: 'DELETE',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			const jsonResponse = JSON.parse(response.payload);
+			expect(response.statusCode).toEqual(200);
+			expect(jsonResponse.status).toEqual('success');
+		});
+
+		it('should return response code 401 when the user tries to remove a reply before authenticate itself', async () => {
+			const response = await server.inject({
+				url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+				method: 'DELETE',
+			});
+
+			expect(response.statusCode).toEqual(401);
+		});
+
+		it('should return response code 403 when the user tries to remove a reply that isn\'t owned', async () => {
+			const aliceResponse = await server.inject({
+				url: '/authentications',
+				method: 'POST',
+				payload: {
+					username: 'alice',
+					password: 'secret_password',
+				},
+			});
+			const aliceJsonResponse = JSON.parse(aliceResponse.payload);
+			const aliceAccessToken = aliceJsonResponse.data.accessToken;
+
+			const response = await server.inject({
+				url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+				method: 'DELETE',
+				headers: {
+					Authorization: `Bearer ${aliceAccessToken}`,
+				},
+			});
+
+			const jsonResponse = JSON.parse(response.payload);
+			expect(response.statusCode).toEqual(403);
+			expect(jsonResponse.status).toEqual('fail');
+			expect(jsonResponse.message).toEqual('You\'re prohibited to get access of this resource');
+		});
+
+		it('should return response code 404 when removing a reply on a non-existing thread', async () => {
+			const response = await server.inject({
+				url: `/threads/thread-abc/comments/${commentId}/replies/${replyId}`,
+				method: 'DELETE',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			const jsonResponse = JSON.parse(response.payload);
+			expect(response.statusCode).toEqual(404);
+			expect(jsonResponse.status).toEqual('fail');
+			expect(jsonResponse.message).toEqual('Failed to remove a reply. Thread not found');
+		});
+
+		it('should return response code 404 when removing a reply on a non-existing comment', async () => {
+			const response = await server.inject({
+				url: `/threads/${threadId}/comments/comment-abc/replies/${replyId}`,
+				method: 'DELETE',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			const jsonResponse = JSON.parse(response.payload);
+			expect(response.statusCode).toEqual(404);
+			expect(jsonResponse.status).toEqual('fail');
+			expect(jsonResponse.message).toEqual('Failed to remove a reply. Comment not found');
+		});
+
+		it('should return response code 404 when removing a non-existing reply', async () => {
+			const response = await server.inject({
+				url: `/threads/${threadId}/comments/${commentId}/replies/comment-abc`,
+				method: 'DELETE',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			const jsonResponse = JSON.parse(response.payload);
+			expect(response.statusCode).toEqual(404);
+			expect(jsonResponse.status).toEqual('fail');
+			expect(jsonResponse.message).toEqual('Failed to remove a reply. Reply not found');
+		});
+	});
+
 	describe('GET /threads/{threadId}', () => {
 		beforeEach(async () => {
 			await ThreadsTableTestHelper.clearTable();

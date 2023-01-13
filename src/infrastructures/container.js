@@ -33,6 +33,8 @@ import {AddThread} from '#applications/usecase/add-thread.js';
 import {AddComment} from '#applications/usecase/add-comment.js';
 import {RemoveComment} from '#applications/usecase/remove-comment.js';
 import {GetDetailedThread} from '#applications/usecase/get-detailed-thread.js';
+import {AddReply} from '#applications/usecase/add-reply.js';
+import {RemoveReply} from '#applications/usecase/remove-reply.js';
 
 export const Types = {
 	Bcrypt: Symbol.for('bcrypt'),
@@ -68,6 +70,8 @@ helpers.annotate(AddThread, [UserRepository, ThreadRepository]);
 helpers.annotate(AddComment, [UserRepository, ThreadRepository]);
 helpers.annotate(RemoveComment, [UserRepository, ThreadRepository]);
 helpers.annotate(GetDetailedThread, [ThreadRepository]);
+helpers.annotate(AddReply, [UserRepository, ThreadRepository]);
+helpers.annotate(RemoveReply, [UserRepository, ThreadRepository]);
 
 const thirdPartyModule = new ContainerModule(bind => {
 	bind(Types.Bcrypt).toConstantValue(bcrypt);
@@ -96,6 +100,8 @@ const applicationModule = new ContainerModule(bind => {
 	bind(AddComment).toSelf();
 	bind(RemoveComment).toSelf();
 	bind(GetDetailedThread).toSelf();
+	bind(AddReply).toSelf();
+	bind(RemoveReply).toSelf();
 });
 
 export const container = new Container();

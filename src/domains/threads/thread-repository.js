@@ -22,12 +22,34 @@ export class ThreadRepository {
 	}
 
 	/**
+     * @param {string} _userId
+     * @param {string} _threadId
+     * @param {string} _commentId
+     * @param {import("#domains/threads/entities/create-comment.js").CreateComment} _createComment
+     * @returns {Promise<import("#domains/threads/entities/created-comment.js").CreatedComment>}
+     */
+	async addReply(_userId, _threadId, _commentId, _createComment) {
+		throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+	}
+
+	/**
    * @param {string} _userId
    * @param {string} _threadId
    * @param {string} _commentId
    * @returns {Promise<void>}
    */
 	async removeComment(_userId, _threadId, _commentId) {
+		throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+	}
+
+	/**
+     * @param {string} _userId
+     * @param {string} _threadId
+     * @param {string} _commentId
+     * @param {string} _replyId
+     * @return {Promise<void>}
+     */
+	async removeReply(_userId, _threadId, _commentId, _replyId) {
 		throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 	}
 

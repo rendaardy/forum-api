@@ -120,6 +120,52 @@ describe('ThreadRepositoryPostgres', () => {
 		});
 	});
 
+	describe('addReply method', () => {
+		beforeEach(async () => {
+			await ThreadsTableTestHelper.addThread({
+				id: 'thread-abc123',
+				title: 'a thread',
+				body: 'a thread body',
+				userId: 'user-abc123',
+			});
+			await ThreadsTableTestHelper.addComment({
+				id: 'comment-abc123',
+				content: 'a comment',
+				userId: 'user-abc234',
+				replyTo: 'thread-abc123',
+			});
+		});
+
+		it('should store reply to DB', async () => {
+			const createComment = new CreateComment({
+				content: 'a reply comment',
+			});
+			const fakeIdGenerator = () => 'xyz123';
+			const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+			await threadRepository.addReply('user-abc123', 'thread-abc123', 'comment-abc123', createComment);
+
+			const replies = await ThreadsTableTestHelper.findCommentById('comment-xyz123');
+			expect(replies).toHaveLength(1);
+		});
+
+		it('should return created reply', async () => {
+			const createComment = new CreateComment({
+				content: 'a reply comment',
+			});
+			const fakeIdGenerator = () => 'xyz123';
+			const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+			const createdReply = await threadRepository.addReply('user-abc123', 'thread-abc123', 'comment-abc123', createComment);
+
+			expect(createdReply).toStrictEqual(new CreatedComment({
+				id: 'comment-xyz123',
+				content: 'a reply comment',
+				owner: 'user-abc123',
+			}));
+		});
+	});
+
 	describe('removeComment', () => {
 		beforeEach(async () => {
 			await ThreadsTableTestHelper.addThread({
@@ -162,6 +208,67 @@ describe('ThreadRepositoryPostgres', () => {
 
 			const comments = await ThreadsTableTestHelper.findCommentById('comment-abc123');
 			expect(comments[0].is_deleted).toBeTruthy();
+		});
+	});
+
+	describe('removeReply method', () => {
+		beforeEach(async () => {
+			await ThreadsTableTestHelper.addThread({
+				id: 'thread-abc123',
+				title: 'a thread',
+				body: 'thread body',
+				userId: 'user-abc123',
+			});
+			await ThreadsTableTestHelper.addComment({
+				id: 'comment-abc123',
+				content: 'a comment',
+				replyTo: 'thread-abc123',
+				userId: 'user-abc234',
+			});
+			await ThreadsTableTestHelper.addReply({
+				id: 'comment-xyz123',
+				content: 'a reply comment',
+				replyTo: 'thread-abc123',
+				userId: 'user-abc345',
+				commentId: 'comment-abc123',
+			});
+		});
+
+		it('should throw an error when thread isn\'t found', async () => {
+			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
+
+			await expect(() => threadRepository.removeReply('user-abc345', 'thread-abc', 'comment-abc123', 'comment-xyz123'))
+				.rejects.toThrowError('Failed to remove a reply. Thread not found');
+		});
+
+		it('should throw an error when comment isn\'t found', async () => {
+			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
+
+			await expect(() => threadRepository.removeReply('user-abc345', 'thread-abc123', 'comment-abc', 'comment-xyz123'))
+				.rejects.toThrowError('Failed to remove a reply. Comment not found');
+		});
+
+		it('should throw an error when reply isn\'t found', async () => {
+			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
+
+			await expect(() => threadRepository.removeReply('user-abc345', 'thread-abc123', 'comment-abc123', 'comment-xyz'))
+				.rejects.toThrowError('Failed to remove a reply. Reply not found');
+		});
+
+		it('should throw an error when a user wants to remove whose reply isn\'t owned', async () => {
+			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
+
+			await expect(() => threadRepository.removeReply('user-abc', 'thread-abc123', 'comment-abc123', 'comment-xyz123'))
+				.rejects.toThrowError('You\'re prohibited to get access of this resource');
+		});
+
+		it('should be doing soft-delete a reply from the database', async () => {
+			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
+
+			await threadRepository.removeReply('user-abc345', 'thread-abc123', 'comment-abc123', 'comment-xyz123');
+
+			const replies = await ThreadsTableTestHelper.findCommentById('comment-xyz123');
+			expect(replies[0].is_deleted).toBeTruthy();
 		});
 	});
 

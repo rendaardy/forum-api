@@ -29,6 +29,21 @@ export class ThreadsTableTestHelper {
 		await pool.query(query);
 	}
 
+	static async addReply({
+		id = 'comment-abc234',
+		userId = 'user-abc123',
+		replyTo = 'thread-abc123',
+		content = 'a reply comment',
+		commentId = 'comment-abc123',
+	}) {
+		const query = {
+			text: 'INSERT INTO comments(id, user_id, reply_to, content, comment_id) VALUES ($1, $2, $3, $4, $5)',
+			values: [id, userId, replyTo, content, commentId],
+		};
+
+		await pool.query(query);
+	}
+
 	/**
    * @param {string} id
    */

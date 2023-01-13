@@ -73,6 +73,50 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
 	}
 
 	/**
+     * @param {string} userId
+     * @param {string} threadId
+     * @param {string} commentId
+     * @param {import("#domains/threads/entities/create-comment.js").CreateComment} createComment
+     * @return {Promise<import("#domains/threads/entities/created-comment.js").CreatedComment>}
+     */
+	async addReply(userId, threadId, commentId, createComment) {
+		let result = await this.#pool.query({
+			text: `
+                SELECT 
+                    comments.id AS comment_id
+                FROM threads
+                LEFT JOIN comments ON
+                    threads.id = comments.reply_to
+                WHERE
+                    threads.id = $1
+            `,
+			values: [threadId],
+		});
+
+		if (result.rowCount <= 0) {
+			throw new NotFoundError('Failed to create a new reply. Thread not found');
+		}
+
+		if (result.rows[0].comment_id !== commentId) {
+			throw new NotFoundError('Failed to create a new reply. Comment not found');
+		}
+
+		const replyId = `comment-${this.#idGenerator()}`;
+		result = await this.#pool.query({
+			text: `
+                INSERT INTO 
+                    comments(id, user_id, reply_to, content, comment_id) 
+                VALUES 
+                    ($1, $2, $3, $4, $5) 
+                RETURNING id, content, user_id AS owner
+            `,
+			values: [replyId, userId, threadId, createComment.content, commentId],
+		});
+
+		return new CreatedComment({...result.rows[0]});
+	}
+
+	/**
    * @param {string} userId
    * @param {string} threadId
    * @param {string} commentId
@@ -106,6 +150,52 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
 		result = await this.#pool.query({
 			text: 'UPDATE comments SET is_deleted = $1 WHERE id = $2',
 			values: [true, commentId],
+		});
+	}
+
+	/**
+     * @param {string} userId
+     * @param {string} threadId
+     * @param {string} commentId
+     * @param {string} replyId
+     * @return {Promise<void>}
+     */
+	async removeReply(userId, threadId, commentId, replyId) {
+		let result = await this.#pool.query({
+			text: `
+                SELECT
+                    comments.id AS comment_id,
+                    reply.id AS reply_id,
+                    reply.user_id
+                FROM threads
+                LEFT JOIN comments ON
+                    threads.id = comments.reply_to
+                LEFT JOIN comments AS reply ON
+                    comments.id = reply.comment_id
+                WHERE threads.id = $1
+            `,
+			values: [threadId],
+		});
+
+		if (result.rowCount <= 0) {
+			throw new NotFoundError('Failed to remove a reply. Thread not found');
+		}
+
+		if (result.rows[0].comment_id !== commentId) {
+			throw new NotFoundError('Failed to remove a reply. Comment not found');
+		}
+
+		if (result.rows[0].reply_id !== replyId) {
+			throw new NotFoundError('Failed to remove a reply. Reply not found');
+		}
+
+		if (result.rows[0].user_id !== userId) {
+			throw new AuthorizationError('You\'re prohibited to get access of this resource');
+		}
+
+		result = await this.#pool.query({
+			text: 'UPDATE comments SET is_deleted = $1 WHERE id = $2',
+			values: [true, replyId],
 		});
 	}
 

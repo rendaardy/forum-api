@@ -25,6 +25,13 @@ export const responseSchema = joi.object({
 				owner: joi.string().required(),
 			}),
 		}),
+		postReply: schema => schema.append({
+			addedReply: joi.object({
+				id: joi.string().required(),
+				content: joi.string().required(),
+				owner: joi.string().required(),
+			}),
+		}),
 		getDetailedThread: schema => schema.append({
 			thread: joi.object({
 				id: joi.string().required(),
