@@ -139,11 +139,13 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
 			throw new NotFoundError('Failed to remove a comment. Thread not found');
 		}
 
-		if (result.rows[0].comment_id !== commentId) {
+		const row = result.rows.find(it => it.comment_id === commentId);
+
+		if (!row) {
 			throw new NotFoundError('Failed to remove a comment. Comment not found');
 		}
 
-		if (result.rows[0].user_id !== userId) {
+		if (row.user_id !== userId) {
 			throw new AuthorizationError('You\'re prohibited to get access of this resource');
 		}
 
@@ -181,15 +183,17 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
 			throw new NotFoundError('Failed to remove a reply. Thread not found');
 		}
 
-		if (result.rows[0].comment_id !== commentId) {
+		const row = result.rows.find(it => it.comment_id === commentId);
+
+		if (!row) {
 			throw new NotFoundError('Failed to remove a reply. Comment not found');
 		}
 
-		if (result.rows[0].reply_id !== replyId) {
+		if (row.reply_id !== replyId) {
 			throw new NotFoundError('Failed to remove a reply. Reply not found');
 		}
 
-		if (result.rows[0].user_id !== userId) {
+		if (row.user_id !== userId) {
 			throw new AuthorizationError('You\'re prohibited to get access of this resource');
 		}
 
