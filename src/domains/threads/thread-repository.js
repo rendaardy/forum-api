@@ -25,10 +25,10 @@ export class ThreadRepository {
      * @param {string} _userId
      * @param {string} _threadId
      * @param {string} _commentId
-     * @param {import("#domains/threads/entities/create-comment.js").CreateComment} _createComment
-     * @returns {Promise<import("#domains/threads/entities/created-comment.js").CreatedComment>}
+     * @param {import("#domains/threads/entities/create-reply.js").CreateReply} _createReply
+     * @returns {Promise<import("#domains/threads/entities/created-reply.js").CreatedReply>}
      */
-	async addReply(_userId, _threadId, _commentId, _createComment) {
+	async addReply(_userId, _threadId, _commentId, _createReply) {
 		throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 	}
 

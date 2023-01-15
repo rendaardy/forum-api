@@ -15,7 +15,7 @@ describe('RemoveReply usecase', () => {
 		const userId = 'user-123';
 		const threadId = 'thread-123';
 		const commentId = 'comment-123';
-		const replyId = 'comment-234';
+		const replyId = 'reply-234';
 		const mockUserRepository = new UserRepository();
 		const mockThreadRepository = new ThreadRepository();
 

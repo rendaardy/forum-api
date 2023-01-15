@@ -24,12 +24,21 @@ describe('GetDetailedThread usecase', () => {
 					username: 'alice',
 					date: new Date(),
 					content: 'a comment',
+					replies: [
+						{
+							id: 'reply-123',
+							username: 'bob',
+							date: new Date(),
+							content: 'a reply comment',
+						},
+					],
 				},
 				{
 					id: 'comment-345',
 					username: 'bob',
 					date: new Date(),
 					content: '**this comment has been deleted**',
+					replies: [],
 				},
 			],
 		});

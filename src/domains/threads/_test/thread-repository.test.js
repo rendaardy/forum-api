@@ -2,6 +2,7 @@ import {describe, it, expect} from '@jest/globals';
 
 import {CreateThread} from '#domains/threads/entities/create-thread.js';
 import {CreateComment} from '#domains/threads/entities/create-comment.js';
+import {CreateReply} from '#domains/threads/entities/create-reply.js';
 import {ThreadRepository} from '../thread-repository.js';
 
 describe('ThreadRepository interface', () => {
@@ -14,16 +15,19 @@ describe('ThreadRepository interface', () => {
 		const createComment = new CreateComment({
 			content: 'a comment',
 		});
+		const createReply = new CreateReply({
+			content: 'a reply comment',
+		});
 
 		await expect(repository.addThread('user-123', createThread)).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 		await expect(repository.addComment('user-123', 'thread-123', createComment)).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-		await expect(repository.addReply('user-123', 'thread-123', 'comment-123', createComment)).rejects
+		await expect(repository.addReply('user-123', 'thread-123', 'comment-123', createReply)).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 		await expect(repository.removeComment('user-123', 'thread-123', 'comment-123')).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-		await expect(repository.removeReply('user-123', 'thread-123', 'comment-123', 'comment-234')).rejects
+		await expect(repository.removeReply('user-123', 'thread-123', 'comment-123', 'reply-234')).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 		await expect(repository.getDetailedThread('thread-123')).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');

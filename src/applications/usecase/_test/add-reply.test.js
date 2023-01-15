@@ -2,8 +2,8 @@ import {describe, it, expect, jest} from '@jest/globals';
 
 import {UserRepository} from '#domains/users/user-repository.js';
 import {ThreadRepository} from '#domains/threads/thread-repository.js';
-import {CreateComment} from '#domains/threads/entities/create-comment.js';
-import {CreatedComment} from '#domains/threads/entities/created-comment.js';
+import {CreateReply} from '#domains/threads/entities/create-reply.js';
+import {CreatedReply} from '#domains/threads/entities/created-reply.js';
 import {AddReply} from '../add-reply.js';
 
 /**
@@ -20,9 +20,9 @@ describe('AddReply usecase', () => {
 		const threadId = 'thread-123';
 		const commentId = 'comment-123';
 		const expectedUserId = 'user-123';
-		const expectedCreatedComent = new CreatedComment({
-			id: 'comment-123',
-			content: 'a comment',
+		const expectedCreatedReply = new CreatedReply({
+			id: 'reply-123',
+			content: 'a reply comment',
 			owner: 'user-123',
 		});
 		const mockUserRepository = new UserRepository();
@@ -33,16 +33,16 @@ describe('AddReply usecase', () => {
 				.mockImplementation(() => Promise.resolve(expectedUserId)));
 		mockThreadRepository.addReply
       = /** @type {MockedFunction<typeof mockThreadRepository.addReply>} */(jest.fn()
-				.mockImplementation(() => Promise.resolve(expectedCreatedComent)));
+				.mockImplementation(() => Promise.resolve(expectedCreatedReply)));
 
 		const addReply = new AddReply(mockUserRepository, mockThreadRepository);
 
 		const createdComment = await addReply.execute(username, threadId, commentId, payload);
 
-		expect(createdComment).toStrictEqual(expectedCreatedComent);
+		expect(createdComment).toStrictEqual(expectedCreatedReply);
 		expect(mockUserRepository.getIdByUsername).toHaveBeenCalledWith(username);
 		expect(mockThreadRepository.addReply)
-			.toHaveBeenCalledWith(expectedUserId, threadId, commentId, new CreateComment({
+			.toHaveBeenCalledWith(expectedUserId, threadId, commentId, new CreateReply({
 				content: payload.content,
 			}));
 	});

@@ -1,4 +1,4 @@
-import {CreateComment} from '#domains/threads/entities/create-comment.js';
+import {CreateReply} from '#domains/threads/entities/create-reply.js';
 
 export class AddReply {
 	#userRepository;
@@ -17,13 +17,13 @@ export class AddReply {
      * @param {string} username
      * @param {string} threadId
      * @param {string} commentId
-     * @param {import("#domains/threads/entities/create-comment.js").Payload} payload
-     * @return {Promise<import("#domains/threads/entities/created-comment.js").CreatedComment>}
+     * @param {import("#domains/threads/entities/create-reply.js").Payload} payload
+     * @return {Promise<import("#domains/threads/entities/created-reply.js").CreatedReply>}
      */
 	async execute(username, threadId, commentId, payload) {
 		const userId = await this.#userRepository.getIdByUsername(username);
-		const createComment = new CreateComment(payload);
+		const createReply = new CreateReply(payload);
 
-		return this.#threadRepository.addReply(userId, threadId, commentId, createComment);
+		return this.#threadRepository.addReply(userId, threadId, commentId, createReply);
 	}
 }
