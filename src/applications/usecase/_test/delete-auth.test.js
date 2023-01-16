@@ -40,7 +40,7 @@ describe('DeleteAuth usecase', () => {
 				.mockImplementation(() => Promise.resolve()));
 		mockAuthenticationRepository.deleteToken
       = /** @type {MockedFunction<typeof mockAuthenticationRepository.deleteToken>} */ (jest.fn()
-				.mockImplementation(() => Promise.resolve));
+				.mockImplementation(() => Promise.resolve()));
 
 		const deleteAuth = new DeleteAuth(mockAuthenticationRepository);
 

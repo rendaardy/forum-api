@@ -29,10 +29,14 @@ describe('AddThread usecase', () => {
 
 		mockUserRepository.getIdByUsername
       = /** @type {MockedFunction<typeof mockUserRepository.getIdByUsername>} */(jest.fn()
-				.mockImplementation(() => Promise.resolve(expectedUserId)));
+				.mockImplementation(() => Promise.resolve('user-123')));
 		mockThreadRepository.addThread
       = /** @type {MockedFunction<typeof mockThreadRepository.addThread>} */(jest.fn()
-				.mockImplementation(() => Promise.resolve(expectedCreatedThread)));
+				.mockImplementation(() => Promise.resolve(new CreatedThread({
+					id: 'thread-123',
+					title: 'a thread',
+					owner: 'user-123',
+				}))));
 
 		const addThread = new AddThread(mockUserRepository, mockThreadRepository);
 

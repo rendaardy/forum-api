@@ -35,7 +35,11 @@ describe('AddUser usecase', () => {
 				.mockImplementation(() => Promise.resolve('encrypted_password')));
 		mockUserRepository.addUser
       = /** @type {MockedFunction<typeof mockUserRepository.addUser>} */(jest.fn()
-				.mockImplementation(() => Promise.resolve(expectedRegisteredUser)));
+				.mockImplementation(() => Promise.resolve(new RegisteredUser({
+					id: 'user-123',
+					username: useCasePayload.username,
+					fullname: useCasePayload.fullname,
+				}))));
 
 		const addUser = new AddUser(mockUserRepository, mockPasswordHash);
 

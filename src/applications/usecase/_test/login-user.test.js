@@ -35,10 +35,10 @@ describe('LoginUser usecase', () => {
 				.mockImplementation(() => Promise.resolve()));
 		mockAuthTokenManager.createAccessToken
       = /** @type {MockedFunction<typeof mockAuthTokenManager.createAccessToken>} */ (jest.fn()
-				.mockImplementation(() => Promise.resolve(expectedAuthentication.accessToken)));
+				.mockImplementation(() => Promise.resolve('access_token')));
 		mockAuthTokenManager.createRefreshToken
       = /** @type {MockedFunction<typeof mockAuthTokenManager.createRefreshToken>} */ (jest.fn()
-				.mockImplementation(() => Promise.resolve(expectedAuthentication.refreshToken)));
+				.mockImplementation(() => Promise.resolve('refresh_token')));
 		mockUserRepository.getIdByUsername
       = /** @type {MockedFunction<typeof mockUserRepository.getIdByUsername>} */ (jest.fn()
 				.mockImplementation(() => Promise.resolve('user-123')));

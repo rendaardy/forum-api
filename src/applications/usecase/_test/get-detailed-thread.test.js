@@ -12,23 +12,24 @@ import {GetDetailedThread} from '../get-detailed-thread.js';
 describe('GetDetailedThread usecase', () => {
 	it('should orchestrate the get detailed thread usecase correctly', async () => {
 		const threadId = 'thread-123';
+		const expectedDate = new Date();
 		const expectedDetailedThread = new DetailedThread({
 			id: threadId,
 			title: 'a thread',
 			body: 'thread body',
-			date: new Date(),
+			date: expectedDate,
 			username: 'dicoding',
 			comments: [
 				{
 					id: 'comment-123',
 					username: 'alice',
-					date: new Date(),
+					date: expectedDate,
 					content: 'a comment',
 					replies: [
 						{
 							id: 'reply-123',
 							username: 'bob',
-							date: new Date(),
+							date: expectedDate,
 							content: 'a reply comment',
 						},
 					],
@@ -36,7 +37,7 @@ describe('GetDetailedThread usecase', () => {
 				{
 					id: 'comment-345',
 					username: 'bob',
-					date: new Date(),
+					date: expectedDate,
 					content: '**this comment has been deleted**',
 					replies: [],
 				},
@@ -46,7 +47,36 @@ describe('GetDetailedThread usecase', () => {
 
 		mockThreadRepository.getDetailedThread
       = /** @type {MockedFunction<typeof mockThreadRepository.getDetailedThread>} */(jest.fn()
-				.mockImplementation(() => Promise.resolve(expectedDetailedThread)));
+				.mockImplementation(() => Promise.resolve(new DetailedThread({
+					id: threadId,
+					title: 'a thread',
+					body: 'thread body',
+					date: expectedDate,
+					username: 'dicoding',
+					comments: [
+						{
+							id: 'comment-123',
+							username: 'alice',
+							date: expectedDate,
+							content: 'a comment',
+							replies: [
+								{
+									id: 'reply-123',
+									username: 'bob',
+									date: expectedDate,
+									content: 'a reply comment',
+								},
+							],
+						},
+						{
+							id: 'comment-345',
+							username: 'bob',
+							date: expectedDate,
+							content: '**this comment has been deleted**',
+							replies: [],
+						},
+					],
+				}))));
 
 		const getDetailedThread = new GetDetailedThread(mockThreadRepository);
 

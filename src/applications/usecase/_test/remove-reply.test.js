@@ -21,7 +21,7 @@ describe('RemoveReply usecase', () => {
 
 		mockUserRepository.getIdByUsername
 		= /** @type {MockedFunction<typeof mockUserRepository.getIdByUsername>} */ (jest.fn()
-				.mockImplementation(() => Promise.resolve(userId)));
+				.mockImplementation(() => Promise.resolve('user-123')));
 		mockThreadRepository.removeReply
 		= /** @type {MockedFunction<typeof mockThreadRepository.removeReply>} */ (jest.fn()
 				.mockImplementation(() => Promise.resolve()));

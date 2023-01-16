@@ -29,10 +29,14 @@ describe('AddComment usecase', () => {
 
 		mockUserRepository.getIdByUsername
       = /** @type {MockedFunction<typeof mockUserRepository.getIdByUsername>} */(jest.fn()
-				.mockImplementation(() => Promise.resolve(expectedUserId)));
+				.mockImplementation(() => Promise.resolve('user-123')));
 		mockThreadRepository.addComment
       = /** @type {MockedFunction<typeof mockThreadRepository.addComment>} */(jest.fn()
-				.mockImplementation(() => Promise.resolve(expectedCreatedComent)));
+				.mockImplementation(() => Promise.resolve(new CreatedComment({
+					id: 'comment-123',
+					content: 'a comment',
+					owner: 'user-123',
+				}))));
 
 		const addComment = new AddComment(mockUserRepository, mockThreadRepository);
 
