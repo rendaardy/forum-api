@@ -563,7 +563,7 @@ describe('/threads endpoint', () => {
 			const jsonResponse = JSON.parse(response.payload);
 			expect(response.statusCode).toEqual(400);
 			expect(jsonResponse.status).toEqual('fail');
-			expect(jsonResponse.message).toEqual('Failed to create a new comment. Missing the required properties');
+			expect(jsonResponse.message).toEqual('Failed to create a new reply. Missing the required properties');
 		});
 
 		it('should return response code 400 when the request payload has type mismatch', async () => {
@@ -581,7 +581,7 @@ describe('/threads endpoint', () => {
 			const jsonResponse = JSON.parse(response.payload);
 			expect(response.statusCode).toEqual(400);
 			expect(jsonResponse.status).toEqual('fail');
-			expect(jsonResponse.message).toEqual('Failed to create a new comment. Type mismatch');
+			expect(jsonResponse.message).toEqual('Failed to create a new reply. Type mismatch');
 		});
 
 		it('should return response code 401 when the user tries to create a new reply before authenticate itself', async () => {
@@ -933,7 +933,7 @@ describe('/threads endpoint', () => {
 			expect(thread.comments[0].content).toEqual('a comment');
 			expect(thread.comments[1].id).toEqual('comment-abc234');
 			expect(thread.comments[1].username).toEqual('bob');
-			expect(thread.comments[1].content).toEqual('** This comment has been deleted **');
+			expect(thread.comments[1].content).toEqual('**komentar telah dihapus**');
 		});
 	});
 });

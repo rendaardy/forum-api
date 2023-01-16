@@ -111,7 +111,7 @@ describe('/users endpoint', () => {
 			const json = JSON.parse(response.payload);
 			expect(response.statusCode).toEqual(400);
 			expect(json.status).toEqual('fail');
-			expect(json.message).toEqual('Failed to create a new user. Username contains forbidden characters');
+			expect(json.message).toEqual('tidak dapat membuat user baru karena username mengandung karakter terlarang');
 		});
 
 		it('should have response code 400 when username isn\'t available', async () => {
@@ -133,7 +133,7 @@ describe('/users endpoint', () => {
 			const json = JSON.parse(response.payload);
 			expect(response.statusCode).toEqual(400);
 			expect(json.status).toEqual('fail');
-			expect(json.message).toEqual('Failed to create a new user. Username isn\'t available');
+			expect(json.message).toEqual('username tidak tersedia');
 		});
 	});
 });

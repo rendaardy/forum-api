@@ -60,6 +60,7 @@ describe('A DetailedThread entity', () => {
 					username: 123,
 					date: new Date(),
 					content: 'a comment',
+					replies: [],
 				},
 			],
 		};
@@ -80,6 +81,14 @@ describe('A DetailedThread entity', () => {
 					username: 'johndoe',
 					date: new Date(),
 					content: 'a comment',
+					replies: [
+						{
+							id: 'reply-123',
+							username: 'janedoe',
+							date: new Date(),
+							content: 'a reply comment',
+						},
+					],
 				},
 			],
 		};

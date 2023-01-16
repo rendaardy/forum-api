@@ -35,7 +35,8 @@ export class UserRepositoryPostgres extends UserRepository {
 		const result = await this.#pool.query(query);
 
 		if (result.rowCount > 0) {
-			throw new InvariantError('Failed to create a new user. Username isn\'t available');
+			// Throw new InvariantError('Failed to create a new user. Username isn\'t available');
+			throw new InvariantError('username tidak tersedia');
 		}
 	}
 

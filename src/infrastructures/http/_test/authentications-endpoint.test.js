@@ -218,7 +218,7 @@ describe('/authentications endpoint', () => {
 			const json = JSON.parse(response.payload);
 			expect(response.statusCode).toEqual(400);
 			expect(json.status).toEqual('fail');
-			expect(json.message).toEqual('invalid refresh token');
+			expect(json.message).toEqual('refresh token tidak valid');
 		});
 
 		it('should have response code 400 when refresh token isn\'t in database', async () => {
@@ -236,7 +236,7 @@ describe('/authentications endpoint', () => {
 			const json = JSON.parse(response.payload);
 			expect(response.statusCode).toEqual(400);
 			expect(json.status).toEqual('fail');
-			expect(json.message).toEqual('refresh token not found');
+			expect(json.message).toEqual('refresh token tidak ditemukan di database');
 		});
 	});
 
@@ -275,7 +275,7 @@ describe('/authentications endpoint', () => {
 			const json = JSON.parse(response.payload);
 			expect(response.statusCode).toEqual(400);
 			expect(json.status).toEqual('fail');
-			expect(json.message).toEqual('refresh token not found');
+			expect(json.message).toEqual('refresh token tidak ditemukan di database');
 		});
 
 		it('should have response code 400 when the payload doesn\'t contain refresh token', async () => {

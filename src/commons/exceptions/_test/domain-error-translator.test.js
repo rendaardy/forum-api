@@ -11,8 +11,10 @@ describe('DomainErrorTranslator', () => {
 			.toStrictEqual(new InvariantError('Failed to create a new user. Type mismatch'));
 		expect(DomainErrorTranslator.translate(new Error('REGISTER_USER.USERNAME_LIMIT_CHAR')))
 			.toStrictEqual(new InvariantError('Failed to create a new user. Username reaches more than 50 characters'));
+		// Expect(DomainErrorTranslator.translate(new Error('REGISTER_USER.USERNAME_CONTAIN_FORBIDDEN_CHARACTERS')))
+		// 	.toStrictEqual(new InvariantError('Failed to create a new user. Username contains forbidden characters'));
 		expect(DomainErrorTranslator.translate(new Error('REGISTER_USER.USERNAME_CONTAIN_FORBIDDEN_CHARACTERS')))
-			.toStrictEqual(new InvariantError('Failed to create a new user. Username contains forbidden characters'));
+			.toStrictEqual(new InvariantError('tidak dapat membuat user baru karena username mengandung karakter terlarang'));
 		expect(DomainErrorTranslator.translate(new Error('USER_LOGIN.NOT_MEET_REQUIRED_PROPERTIES')))
 			.toStrictEqual(new InvariantError('username or password is required'));
 		expect(DomainErrorTranslator.translate(new Error('USER_LOGIN.TYPE_MISMATCH')))

@@ -14,6 +14,8 @@ import {CreateThread} from '#domains/threads/entities/create-thread.js';
 import {CreatedThread} from '#domains/threads/entities/created-thread.js';
 import {CreateComment} from '#domains/threads/entities/create-comment.js';
 import {CreatedComment} from '#domains/threads/entities/created-comment.js';
+import {CreateReply} from '#domains/threads/entities/create-reply.js';
+import {CreatedReply} from '#domains/threads/entities/created-reply.js';
 import {DetailedThread} from '#domains/threads/entities/detailed-thread.js';
 import {pool} from '#infrastructures/database/postgres/pool.js';
 import {ThreadRepositoryPostgres} from '../thread-repository-postgres.js';
@@ -50,6 +52,18 @@ describe('ThreadRepositoryPostgres', () => {
 	});
 
 	describe('addThread method', () => {
+		it('should throw an error when userId isn\'t found', async () => {
+			const createThread = new CreateThread({
+				title: 'a thread',
+				body: 'thread body',
+			});
+			const fakeIdGenerator = () => 'abc123';
+			const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+			await expect(threadRepository.addThread('user-abc', createThread))
+				.rejects.toThrowError('User not found');
+		});
+
 		it('should store thread to DB', async () => {
 			const createThread = new CreateThread({
 				title: 'a thread',
@@ -82,12 +96,34 @@ describe('ThreadRepositoryPostgres', () => {
 		});
 	});
 
-	describe('addComment', () => {
+	describe('addComment method', () => {
 		beforeEach(async () => {
 			await ThreadsTableTestHelper.addThread({
 				title: 'a thread',
 				body: 'a thread body',
 			});
+		});
+
+		it('should throw an error when userId isn\'t found', async () => {
+			const createComment = new CreateComment({
+				content: 'a comment',
+			});
+			const fakeIdGenerator = () => 'abc123';
+			const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+			await expect(threadRepository.addComment('user-abc', 'thread-abc123', createComment))
+				.rejects.toThrowError('User not found');
+		});
+
+		it('should throw an error when threadId isn\'t found', async () => {
+			const createComment = new CreateComment({
+				content: 'a comment',
+			});
+			const fakeIdGenerator = () => 'abc123';
+			const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+			await expect(threadRepository.addComment('user-abc123', 'thread-abc', createComment))
+				.rejects.toThrowError('Failed to create a new comment. Thread not found');
 		});
 
 		it('should store comment to DB', async () => {
@@ -136,37 +172,70 @@ describe('ThreadRepositoryPostgres', () => {
 			});
 		});
 
-		it('should store reply to DB', async () => {
-			const createComment = new CreateComment({
+		it('should throw an error when userId isn\'t found', async () => {
+			const createReply = new CreateReply({
 				content: 'a reply comment',
 			});
 			const fakeIdGenerator = () => 'xyz123';
 			const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
-			await threadRepository.addReply('user-abc123', 'thread-abc123', 'comment-abc123', createComment);
+			await expect(threadRepository.addReply('user-abc', 'thread-abc123', 'comment-abc123', createReply))
+				.rejects.toThrowError('User not found');
+		});
 
-			const replies = await ThreadsTableTestHelper.findCommentById('comment-xyz123');
+		it('should throw an error when threadId isn\'t found', async () => {
+			const createReply = new CreateReply({
+				content: 'a reply comment',
+			});
+			const fakeIdGenerator = () => 'xyz123';
+			const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+			await expect(threadRepository.addReply('user-abc123', 'thread-abc', 'comment-abc123', createReply))
+				.rejects.toThrowError('Failed to create a new reply. Thread not found');
+		});
+
+		it('should throw an error when commentId isn\'t found', async () => {
+			const createReply = new CreateReply({
+				content: 'a reply comment',
+			});
+			const fakeIdGenerator = () => 'xyz123';
+			const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+			await expect(threadRepository.addReply('user-abc123', 'thread-abc123', 'comment-abc', createReply))
+				.rejects.toThrowError('Failed to create a new reply. Comment not found');
+		});
+
+		it('should store reply to DB', async () => {
+			const createReply = new CreateReply({
+				content: 'a reply comment',
+			});
+			const fakeIdGenerator = () => 'xyz123';
+			const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
+
+			await threadRepository.addReply('user-abc123', 'thread-abc123', 'comment-abc123', createReply);
+
+			const replies = await ThreadsTableTestHelper.findReplyById('reply-xyz123');
 			expect(replies).toHaveLength(1);
 		});
 
 		it('should return created reply', async () => {
-			const createComment = new CreateComment({
+			const createReply = new CreateReply({
 				content: 'a reply comment',
 			});
 			const fakeIdGenerator = () => 'xyz123';
 			const threadRepository = new ThreadRepositoryPostgres(pool, fakeIdGenerator);
 
-			const createdReply = await threadRepository.addReply('user-abc123', 'thread-abc123', 'comment-abc123', createComment);
+			const createdReply = await threadRepository.addReply('user-abc123', 'thread-abc123', 'comment-abc123', createReply);
 
-			expect(createdReply).toStrictEqual(new CreatedComment({
-				id: 'comment-xyz123',
+			expect(createdReply).toStrictEqual(new CreatedReply({
+				id: 'reply-xyz123',
 				content: 'a reply comment',
 				owner: 'user-abc123',
 			}));
 		});
 	});
 
-	describe('removeComment', () => {
+	describe('removeComment method', () => {
 		beforeEach(async () => {
 			await ThreadsTableTestHelper.addThread({
 				title: 'a thread',
@@ -226,53 +295,52 @@ describe('ThreadRepositoryPostgres', () => {
 				userId: 'user-abc234',
 			});
 			await ThreadsTableTestHelper.addReply({
-				id: 'comment-xyz123',
+				id: 'reply-xyz123',
 				content: 'a reply comment',
-				replyTo: 'thread-abc123',
+				replyTo: 'comment-abc123',
 				userId: 'user-abc345',
-				commentId: 'comment-abc123',
 			});
 		});
 
 		it('should throw an error when thread isn\'t found', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
-			await expect(() => threadRepository.removeReply('user-abc345', 'thread-abc', 'comment-abc123', 'comment-xyz123'))
+			await expect(() => threadRepository.removeReply('user-abc345', 'thread-abc', 'comment-abc123', 'reply-xyz123'))
 				.rejects.toThrowError('Failed to remove a reply. Thread not found');
 		});
 
 		it('should throw an error when comment isn\'t found', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
-			await expect(() => threadRepository.removeReply('user-abc345', 'thread-abc123', 'comment-abc', 'comment-xyz123'))
+			await expect(() => threadRepository.removeReply('user-abc345', 'thread-abc123', 'comment-abc', 'reply-xyz123'))
 				.rejects.toThrowError('Failed to remove a reply. Comment not found');
 		});
 
 		it('should throw an error when reply isn\'t found', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
-			await expect(() => threadRepository.removeReply('user-abc345', 'thread-abc123', 'comment-abc123', 'comment-xyz'))
+			await expect(() => threadRepository.removeReply('user-abc345', 'thread-abc123', 'comment-abc123', 'reply-xyz'))
 				.rejects.toThrowError('Failed to remove a reply. Reply not found');
 		});
 
 		it('should throw an error when a user wants to remove whose reply isn\'t owned', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
-			await expect(() => threadRepository.removeReply('user-abc', 'thread-abc123', 'comment-abc123', 'comment-xyz123'))
+			await expect(() => threadRepository.removeReply('user-abc', 'thread-abc123', 'comment-abc123', 'reply-xyz123'))
 				.rejects.toThrowError('You\'re prohibited to get access of this resource');
 		});
 
 		it('should be doing soft-delete a reply from the database', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
-			await threadRepository.removeReply('user-abc345', 'thread-abc123', 'comment-abc123', 'comment-xyz123');
+			await threadRepository.removeReply('user-abc345', 'thread-abc123', 'comment-abc123', 'reply-xyz123');
 
-			const replies = await ThreadsTableTestHelper.findCommentById('comment-xyz123');
+			const replies = await ThreadsTableTestHelper.findReplyById('reply-xyz123');
 			expect(replies[0].is_deleted).toBeTruthy();
 		});
 	});
 
-	describe('getDetailedThread', () => {
+	describe('getDetailedThread method', () => {
 		beforeEach(async () => {
 			await ThreadsTableTestHelper.addThread({
 				id: 'thread-abc123',
@@ -291,6 +359,18 @@ describe('ThreadRepositoryPostgres', () => {
 				userId: 'user-abc345',
 				replyTo: 'thread-abc123',
 				content: 'a comment 2',
+			});
+			await ThreadsTableTestHelper.addReply({
+				id: 'reply-xyz123',
+				userId: 'user-abc123',
+				replyTo: 'comment-abc123',
+				content: 'a reply comment',
+			});
+			await ThreadsTableTestHelper.addReply({
+				id: 'reply-xyz234',
+				userId: 'user-abc234',
+				replyTo: 'comment-abc123',
+				content: 'a reply comment 2',
 			});
 		});
 
@@ -318,21 +398,37 @@ describe('ThreadRepositoryPostgres', () => {
 						username: 'alice',
 						date: detailedThread.comments[0].date,
 						content: 'a comment',
+						replies: [
+							{
+								id: 'reply-xyz123',
+								username: 'dicoding',
+								date: detailedThread.comments[0].replies[0].date,
+								content: 'a reply comment',
+							},
+							{
+								id: 'reply-xyz234',
+								username: 'alice',
+								date: detailedThread.comments[0].replies[1].date,
+								content: 'a reply comment 2',
+							},
+						],
 					},
 					{
 						id: 'comment-abc234',
 						username: 'bob',
 						date: detailedThread.comments[1].date,
 						content: 'a comment 2',
+						replies: [],
 					},
 				],
 			}));
 		});
 
-		it('should return detailed thread with 1 comment deleted', async () => {
+		it('should return detailed thread with 1 comment and reply deleted', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
-			await threadRepository.removeComment('user-abc234', 'thread-abc123', 'comment-abc123');
+			await threadRepository.removeComment('user-abc345', 'thread-abc123', 'comment-abc234');
+			await threadRepository.removeReply('user-abc234', 'thread-abc123', 'comment-abc123', 'reply-xyz234');
 			const detailedThread = await threadRepository.getDetailedThread('thread-abc123');
 
 			expect(detailedThread).toStrictEqual(new DetailedThread({
@@ -346,13 +442,28 @@ describe('ThreadRepositoryPostgres', () => {
 						id: 'comment-abc123',
 						username: 'alice',
 						date: detailedThread.comments[0].date,
-						content: '** This comment has been deleted **',
+						content: 'a comment',
+						replies: [
+							{
+								id: 'reply-xyz123',
+								username: 'dicoding',
+								date: detailedThread.comments[0].replies[0].date,
+								content: 'a reply comment',
+							},
+							{
+								id: 'reply-xyz234',
+								username: 'alice',
+								date: detailedThread.comments[0].replies[1].date,
+								content: '**balasan telah dihapus**',
+							},
+						],
 					},
 					{
 						id: 'comment-abc234',
 						username: 'bob',
 						date: detailedThread.comments[1].date,
-						content: 'a comment 2',
+						content: '**komentar telah dihapus**',
+						replies: [],
 					},
 				],
 			}));
