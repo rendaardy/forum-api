@@ -346,35 +346,35 @@ describe('ThreadRepositoryPostgres', () => {
 				id: 'thread-abc123',
 				title: 'a thread',
 				body: 'a thread body',
-                date: new Date(2022, 10, 9, 14, 35, 10),
+				date: new Date(2022, 10, 9, 14, 35, 10),
 				userId: 'user-abc123',
 			});
 			await ThreadsTableTestHelper.addComment({
 				id: 'comment-abc123',
 				userId: 'user-abc234',
 				replyTo: 'thread-abc123',
-                date: new Date(2022, 10, 10, 7, 0, 5),
+				date: new Date(2022, 10, 10, 7, 0, 5),
 				content: 'a comment',
 			});
 			await ThreadsTableTestHelper.addComment({
 				id: 'comment-abc234',
 				userId: 'user-abc345',
 				replyTo: 'thread-abc123',
-                date: new Date(2022, 10, 10, 9, 11, 15),
+				date: new Date(2022, 10, 10, 9, 11, 15),
 				content: 'a comment 2',
 			});
 			await ThreadsTableTestHelper.addReply({
 				id: 'reply-xyz123',
 				userId: 'user-abc123',
 				replyTo: 'comment-abc123',
-                date: new Date(2022, 10, 11, 14, 15, 16),
+				date: new Date(2022, 10, 11, 14, 15, 16),
 				content: 'a reply comment',
 			});
 			await ThreadsTableTestHelper.addReply({
 				id: 'reply-xyz234',
 				userId: 'user-abc234',
 				replyTo: 'comment-abc123',
-                date: new Date(2022, 10, 11, 15, 17, 20),
+				date: new Date(2022, 10, 11, 15, 17, 20),
 				content: 'a reply comment 2',
 			});
 		});
@@ -395,35 +395,35 @@ describe('ThreadRepositoryPostgres', () => {
 				id: 'thread-abc123',
 				title: 'a thread',
 				body: 'a thread body',
-                date: new Date(2022, 10, 9, 14, 35, 10),
+				date: new Date(2022, 10, 9, 14, 35, 10),
 				username: 'dicoding',
 				comments: [
 					{
 						id: 'comment-abc123',
 						username: 'alice',
-                        date: new Date(2022, 10, 10, 7, 0, 5),
+						date: new Date(2022, 10, 10, 7, 0, 5),
 						content: 'a comment',
 						replies: [
 							{
 								id: 'reply-xyz123',
 								username: 'dicoding',
-                                date: new Date(2022, 10, 11, 14, 15, 16),
+								date: new Date(2022, 10, 11, 14, 15, 16),
 								content: 'a reply comment',
 							},
 							{
-                                id: 'reply-xyz234',
-                                username: 'alice',
-                                date: new Date(2022, 10, 11, 15, 17, 20),
-                                content: 'a reply comment 2',
+								id: 'reply-xyz234',
+								username: 'alice',
+								date: new Date(2022, 10, 11, 15, 17, 20),
+								content: 'a reply comment 2',
 							},
 						],
 					},
 					{
-                        id: 'comment-abc234',
-                        username: 'bob',
-                        date: new Date(2022, 10, 10, 9, 11, 15),
-                        content: 'a comment 2',
-                        replies: [],
+						id: 'comment-abc234',
+						username: 'bob',
+						date: new Date(2022, 10, 10, 9, 11, 15),
+						content: 'a comment 2',
+						replies: [],
 					},
 				],
 			}));
@@ -440,25 +440,25 @@ describe('ThreadRepositoryPostgres', () => {
 				id: 'thread-abc123',
 				title: 'a thread',
 				body: 'a thread body',
-                date: new Date(2022, 10, 9, 14, 35, 10),
+				date: new Date(2022, 10, 9, 14, 35, 10),
 				username: 'dicoding',
 				comments: [
 					{
 						id: 'comment-abc123',
 						username: 'alice',
-                        date: new Date(2022, 10, 10, 7, 0, 5),
+						date: new Date(2022, 10, 10, 7, 0, 5),
 						content: 'a comment',
 						replies: [
 							{
 								id: 'reply-xyz123',
 								username: 'dicoding',
-                                date: new Date(2022, 10, 11, 14, 15, 16),
+								date: new Date(2022, 10, 11, 14, 15, 16),
 								content: 'a reply comment',
 							},
 							{
 								id: 'reply-xyz234',
 								username: 'alice',
-                                date: new Date(2022, 10, 11, 15, 17, 20),
+								date: new Date(2022, 10, 11, 15, 17, 20),
 								content: '**balasan telah dihapus**',
 							},
 						],
@@ -466,7 +466,7 @@ describe('ThreadRepositoryPostgres', () => {
 					{
 						id: 'comment-abc234',
 						username: 'bob',
-                        date: new Date(2022, 10, 10, 9, 11, 15),
+						date: new Date(2022, 10, 10, 9, 11, 15),
 						content: '**komentar telah dihapus**',
 						replies: [],
 					},

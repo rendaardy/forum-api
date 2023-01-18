@@ -7,7 +7,7 @@ export class ThreadsTableTestHelper {
 		id = 'thread-abc123',
 		title = 'a thread',
 		body = 'thread body',
-        date = new Date(),
+		date = new Date(),
 		userId = 'user-abc123',
 	}) {
 		const query = {
@@ -22,7 +22,7 @@ export class ThreadsTableTestHelper {
 		id = 'comment-abc123',
 		userId = 'user-abc123',
 		replyTo = 'thread-abc123',
-        date = new Date(),
+		date = new Date(),
 		content = 'a comment',
 	}) {
 		const query = {
@@ -37,7 +37,7 @@ export class ThreadsTableTestHelper {
 		id = 'reply-abc234',
 		userId = 'user-abc123',
 		replyTo = 'comment-abc123',
-        date = new Date(),
+		date = new Date(),
 		content = 'a reply comment',
 	}) {
 		const query = {
