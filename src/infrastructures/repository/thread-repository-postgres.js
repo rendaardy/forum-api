@@ -152,8 +152,7 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
 		let result = await this.#pool.query({
 			text: `
                 SELECT 
-                    comments.id AS comment_id,
-                    comments.user_id 
+                    comments.id AS comment_id
                 FROM threads 
                 LEFT JOIN comments ON threads.id = comments.reply_to 
                 WHERE threads.id = $1
@@ -169,10 +168,6 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
 
 		if (!row) {
 			throw new NotFoundError('Failed to remove a comment. Comment not found');
-		}
-
-		if (row.user_id !== userId) {
-			throw new AuthorizationError('You\'re prohibited to get access of this resource');
 		}
 
 		result = await this.#pool.query({
@@ -193,8 +188,7 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
 			text: `
                 SELECT
                     comments.id AS comment_id,
-                    replies.id AS reply_id,
-                    replies.user_id
+                    replies.id AS reply_id
                 FROM threads
                 LEFT JOIN comments ON
                     threads.id = comments.reply_to
@@ -221,14 +215,50 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
 			throw new NotFoundError('Failed to remove a reply. Reply not found');
 		}
 
-		if (reply.user_id !== userId) {
-			throw new AuthorizationError('You\'re prohibited to get access of this resource');
-		}
-
 		result = await this.#pool.query({
 			text: 'UPDATE replies SET is_deleted = $1 WHERE id = $2',
 			values: [true, replyId],
 		});
+	}
+
+	/**
+     * @param {string} userId
+     * @param {string} commentId
+     * @return {Promise<void>}
+     */
+	async verifyCommentOwner(userId, commentId) {
+		const result = await this.#pool.query({
+			text: 'SELECT user_id FROM comments WHERE id = $1',
+			values: [commentId],
+		});
+
+		if (result.rowCount <= 0) {
+			throw new NotFoundError('Comment not found');
+		}
+
+		if (result.rows[0].user_id !== userId) {
+			throw new AuthorizationError('You\'re prohibited to get access of this resource');
+		}
+	}
+
+	/**
+     * @param {string} userId
+     * @param {string} replyId
+     * @return {Promise<void>}
+     */
+	async verifyReplyOwner(userId, replyId) {
+		const result = await this.#pool.query({
+			text: 'SELECT user_id FROM replies WHERE id = $1',
+			values: [replyId],
+		});
+
+		if (result.rowCount <= 0) {
+			throw new NotFoundError('Reply not found');
+		}
+
+		if (result.rows[0].user_id !== userId) {
+			throw new AuthorizationError('You\'re prohibited to get access of this resource');
+		}
 	}
 
 	/**

@@ -263,13 +263,6 @@ describe('ThreadRepositoryPostgres', () => {
 				.rejects.toThrowError('Failed to remove a comment. Comment not found');
 		});
 
-		it('should throw an error when a user wants to remove whose comment isn\'t owned', async () => {
-			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
-
-			await expect(() => threadRepository.removeComment('user-abc', 'thread-abc123', 'comment-abc123'))
-				.rejects.toThrowError('You\'re prohibited to get access of this resource');
-		});
-
 		it('should be doing soft-delete a comment from the database', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
@@ -323,13 +316,6 @@ describe('ThreadRepositoryPostgres', () => {
 				.rejects.toThrowError('Failed to remove a reply. Reply not found');
 		});
 
-		it('should throw an error when a user wants to remove whose reply isn\'t owned', async () => {
-			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
-
-			await expect(() => threadRepository.removeReply('user-abc', 'thread-abc123', 'comment-abc123', 'reply-xyz123'))
-				.rejects.toThrowError('You\'re prohibited to get access of this resource');
-		});
-
 		it('should be doing soft-delete a reply from the database', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
@@ -337,6 +323,86 @@ describe('ThreadRepositoryPostgres', () => {
 
 			const replies = await ThreadsTableTestHelper.findReplyById('reply-xyz123');
 			expect(replies[0].is_deleted).toBeTruthy();
+		});
+	});
+
+	describe('verifyCommentOwner method', () => {
+		beforeEach(async () => {
+			await ThreadsTableTestHelper.addThread({
+				id: 'thread-abc123',
+				title: 'a thread',
+				body: 'a thread body',
+				userId: 'user-abc123',
+			});
+			await ThreadsTableTestHelper.addComment({
+				id: 'comment-abc123',
+				replyTo: 'thread-abc123',
+				content: 'a comment',
+				userId: 'user-abc234',
+			});
+		});
+
+		it('should throw an error when comment isn\'t found', async () => {
+			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
+
+			await expect(() => threadRepository.verifyCommentOwner('user-abc234', 'comment-abc'))
+				.rejects.toThrowError('Comment not found');
+		});
+
+		it('should throw an error when comment isn\'t owned by the user', async () => {
+			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
+
+			await expect(() => threadRepository.verifyCommentOwner('user-abc', 'comment-abc123'))
+				.rejects.toThrowError('You\'re prohibited to get access of this resource');
+		});
+
+		it('should successfully verify the comment when it\'s owned by the user', async () => {
+			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
+
+			expect(() => threadRepository.verifyCommentOwner('user-abc234', 'comment-abc123')).not.toThrow();
+		});
+	});
+
+	describe('verifyReplyOwner method', () => {
+		beforeEach(async () => {
+			await ThreadsTableTestHelper.addThread({
+				id: 'thread-abc123',
+				title: 'a thread',
+				body: 'a thread body',
+				userId: 'user-abc123',
+			});
+			await ThreadsTableTestHelper.addComment({
+				id: 'comment-abc123',
+				replyTo: 'thread-abc123',
+				content: 'a comment',
+				userId: 'user-abc234',
+			});
+			await ThreadsTableTestHelper.addReply({
+				id: 'reply-abc123',
+				replyTo: 'comment-abc123',
+				content: 'a reply comment',
+				userId: 'user-abc345',
+			});
+		});
+
+		it('should throw an error when reply isn\'t found', async () => {
+			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
+
+			await expect(() => threadRepository.verifyReplyOwner('user-abc345', 'reply-abc'))
+				.rejects.toThrowError('Reply not found');
+		});
+
+		it('should throw an error when reply isn\'t owned by the user', async () => {
+			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
+
+			await expect(() => threadRepository.verifyReplyOwner('user-abc', 'reply-abc123'))
+				.rejects.toThrowError('You\'re prohibited to get access of this resource');
+		});
+
+		it('should successfully verify when reply is owned by the user', async () => {
+			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
+
+			expect(() => threadRepository.verifyReplyOwner('user-abc345', 'reply-abc123')).not.toThrow();
 		});
 	});
 
