@@ -7,11 +7,12 @@ export class ThreadsTableTestHelper {
 		id = 'thread-abc123',
 		title = 'a thread',
 		body = 'thread body',
+        date = new Date(),
 		userId = 'user-abc123',
 	}) {
 		const query = {
-			text: 'INSERT INTO threads(id, title, body, user_id) VALUES ($1, $2, $3, $4)',
-			values: [id, title, body, userId],
+			text: 'INSERT INTO threads(id, title, body, date, user_id) VALUES ($1, $2, $3, $4, $5)',
+			values: [id, title, body, date, userId],
 		};
 
 		await pool.query(query);
@@ -21,11 +22,12 @@ export class ThreadsTableTestHelper {
 		id = 'comment-abc123',
 		userId = 'user-abc123',
 		replyTo = 'thread-abc123',
+        date = new Date(),
 		content = 'a comment',
 	}) {
 		const query = {
-			text: 'INSERT INTO comments(id, user_id, reply_to, content) VALUES ($1, $2, $3, $4)',
-			values: [id, userId, replyTo, content],
+			text: 'INSERT INTO comments(id, user_id, reply_to, date, content) VALUES ($1, $2, $3, $4, $5)',
+			values: [id, userId, replyTo, date, content],
 		};
 
 		await pool.query(query);
@@ -35,11 +37,12 @@ export class ThreadsTableTestHelper {
 		id = 'reply-abc234',
 		userId = 'user-abc123',
 		replyTo = 'comment-abc123',
+        date = new Date(),
 		content = 'a reply comment',
 	}) {
 		const query = {
-			text: 'INSERT INTO replies(id, user_id, reply_to, content) VALUES ($1, $2, $3, $4)',
-			values: [id, userId, replyTo, content],
+			text: 'INSERT INTO replies(id, user_id, reply_to, date, content) VALUES ($1, $2, $3, $4, $5)',
+			values: [id, userId, replyTo, date, content],
 		};
 
 		await pool.query(query);
