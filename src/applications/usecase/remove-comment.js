@@ -21,6 +21,6 @@ export class RemoveComment {
 		const userId = await this.#userRepository.getIdByUsername(username);
 
 		await this.#threadRepository.verifyCommentOwner(userId, commentId);
-		await this.#threadRepository.removeComment(userId, threadId, commentId);
+		await this.#threadRepository.removeComment(threadId, commentId);
 	}
 }

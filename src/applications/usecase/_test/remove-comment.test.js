@@ -34,6 +34,6 @@ describe('RemoveComment usecase', () => {
 
 		expect(mockUserRepository.getIdByUsername).toHaveBeenCalledWith(username);
 		expect(mockThreadRepository.verifyCommentOwner).toHaveBeenCalledWith(userId, commentId);
-		expect(mockThreadRepository.removeComment).toHaveBeenCalledWith(userId, threadId, commentId);
+		expect(mockThreadRepository.removeComment).toHaveBeenCalledWith(threadId, commentId);
 	});
 });

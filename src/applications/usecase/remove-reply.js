@@ -22,6 +22,6 @@ export class RemoveReply {
 		const userId = await this.#userRepository.getIdByUsername(username);
 
 		await this.#threadRepository.verifyReplyOwner(userId, replyId);
-		await this.#threadRepository.removeReply(userId, threadId, commentId, replyId);
+		await this.#threadRepository.removeReply(threadId, commentId, replyId);
 	}
 }

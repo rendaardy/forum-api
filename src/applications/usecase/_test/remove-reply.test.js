@@ -35,6 +35,6 @@ describe('RemoveReply usecase', () => {
 
 		expect(mockUserRepository.getIdByUsername).toHaveBeenCalledWith(username);
 		expect(mockThreadRepository.verifyReplyOwner).toHaveBeenCalledWith(userId, replyId);
-		expect(mockThreadRepository.removeReply).toHaveBeenCalledWith(userId, threadId, commentId, replyId);
+		expect(mockThreadRepository.removeReply).toHaveBeenCalledWith(threadId, commentId, replyId);
 	});
 });
