@@ -15,9 +15,9 @@ export default {
 	moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
 	roots: ['<rootDir>'],
 	setupFiles: ['dotenv/config'],
-	// Transform: {
-	//    "^.+\\.[tj]sx?$": ["ts-jest", { useESM: true, isolatedModules: false }],
-	//  },
-	preset: 'ts-jest/presets/default-esm',
+    transform: {
+        "^.+\\.[tj]sx?$": ["ts-jest", { useESM: true, isolatedModules: true }],
+    },
+	preset: 'ts-jest/presets/js-with-ts-esm',
 	watchman: false,
 };
