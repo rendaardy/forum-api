@@ -4,6 +4,7 @@
  * @property {unknown} [username]
  * @property {unknown} [date]
  * @property {unknown} [content]
+ * @property {boolean} [isDeleted]
  */
 
 export class DetailedReply {
@@ -21,7 +22,7 @@ export class DetailedReply {
 		this.id = id;
 		this.username = username;
 		this.date = date;
-		this.content = content;
+		this.content = payload?.isDeleted ? '**balasan telah dihapus**' : content;
 	}
 
 	/**

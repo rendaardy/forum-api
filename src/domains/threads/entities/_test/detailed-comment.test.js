@@ -93,4 +93,38 @@ describe('A DetailedComment entity', () => {
 			expect(reply.content).toEqual(payload.replies[Number(i)].content);
 		}
 	});
+
+	it('should create \'DetailedComment\' object with content that show a removed message', () => {
+		const payload = {
+			id: 'comment-123',
+			username: 'dicoding',
+			date: new Date(),
+			content: 'a comment',
+			isDeleted: true,
+			replies: [
+				{
+					id: 'reply-xxx',
+					username: 'alice',
+					date: new Date(),
+					content: 'a reply comment',
+				},
+			],
+		};
+
+		const {id, username, date, content, replies} = new DetailedComment(payload);
+
+		expect(id).toEqual(payload.id);
+		expect(username).toEqual(payload.username);
+		expect(date).toEqual(payload.date);
+		expect(content).toEqual('**komentar telah dihapus**');
+		expect(replies).toEqual(payload.replies);
+
+		for (const [i, reply] of Object.entries(replies)) {
+			expect(reply).toBeInstanceOf(DetailedReply);
+			expect(reply.id).toEqual(payload.replies[Number(i)].id);
+			expect(reply.username).toEqual(payload.replies[Number(i)].username);
+			expect(reply.date).toEqual(payload.replies[Number(i)].date);
+			expect(reply.content).toEqual(payload.replies[Number(i)].content);
+		}
+	});
 });

@@ -38,4 +38,21 @@ describe('A DetailedReply entity', () => {
 		expect(date).toEqual(payload.date);
 		expect(content).toEqual(payload.content);
 	});
+
+	it('should create \'DetailedReply\' object with content that show a removed message', () => {
+		const payload = {
+			id: 'reply-123',
+			username: 'dicoding',
+			date: new Date(),
+			content: 'a reply comment',
+			isDeleted: true,
+		};
+
+		const {id, username, date, content} = new DetailedReply(payload);
+
+		expect(id).toEqual(payload.id);
+		expect(username).toEqual(payload.username);
+		expect(date).toEqual(payload.date);
+		expect(content).toEqual('**balasan telah dihapus**');
+	});
 });

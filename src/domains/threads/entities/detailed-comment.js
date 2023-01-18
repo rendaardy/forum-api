@@ -7,6 +7,7 @@ import {DetailedReply} from './detailed-reply.js';
  * @property {unknown} [date]
  * @property {unknown} [content]
  * @property {Array<unknown>} [replies]
+ * @property {boolean} [isDeleted]
  */
 
 export class DetailedComment {
@@ -25,7 +26,7 @@ export class DetailedComment {
 		this.id = id;
 		this.username = username;
 		this.date = date;
-		this.content = content;
+		this.content = payload?.isDeleted ? '**komentar telah dihapus**' : content;
 		this.replies = [];
 
 		for (const reply of replies) {

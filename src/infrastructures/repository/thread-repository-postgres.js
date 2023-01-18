@@ -326,17 +326,15 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
 					id: c.comment_id,
 					username: c.comment_username,
 					date: c.comment_date,
-					content: c.comment_is_deleted
-						? '**komentar telah dihapus**'
-						: c.comment_content,
+					content: c.comment_content,
+					isDeleted: c.comment_is_deleted,
 					replies: commentWithReplies
 						.map(it => ({
 							id: it.reply_id,
 							username: it.reply_username,
 							date: it.reply_date,
-							content: it.reply_is_deleted
-								? '**balasan telah dihapus**'
-								: it.reply_content,
+							content: it.reply_content,
+							isDeleted: it.reply_is_deleted,
 						}))
 						.filter(it => it.id !== null),
 				});
