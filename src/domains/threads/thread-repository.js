@@ -54,6 +54,22 @@ export class ThreadRepository {
 	}
 
 	/**
+     * @param {string} _userId
+     * @param {string} _commentId
+     */
+	async verifyCommentOwner(_userId, _commentId) {
+		throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+	}
+
+	/**
+     * @param {string} _userId
+     * @param {string} _replyId
+     */
+	async verifyReplyOwner(_userId, _replyId) {
+		throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+	}
+
+	/**
    * @param {string} _threadId
    * @returns {Promise<import("#domains/threads/entities/detailed-thread.js").DetailedThread>}
    */
