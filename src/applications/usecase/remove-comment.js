@@ -20,6 +20,7 @@ export class RemoveComment {
 	async execute(username, threadId, commentId) {
 		const userId = await this.#userRepository.getIdByUsername(username);
 
+		await this.#threadRepository.verifyCommentOwner(userId, commentId);
 		await this.#threadRepository.removeComment(userId, threadId, commentId);
 	}
 }

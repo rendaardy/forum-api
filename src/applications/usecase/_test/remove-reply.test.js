@@ -22,6 +22,9 @@ describe('RemoveReply usecase', () => {
 		mockUserRepository.getIdByUsername
 		= /** @type {MockedFunction<typeof mockUserRepository.getIdByUsername>} */ (jest.fn()
 				.mockImplementation(() => Promise.resolve('user-123')));
+		mockThreadRepository.verifyReplyOwner
+        = /** @type {MockedFunction<typeof mockThreadRepository.verifyReplyOwner>} */ (jest.fn()
+				.mockImplementation(() => Promise.resolve()));
 		mockThreadRepository.removeReply
 		= /** @type {MockedFunction<typeof mockThreadRepository.removeReply>} */ (jest.fn()
 				.mockImplementation(() => Promise.resolve()));
@@ -31,6 +34,7 @@ describe('RemoveReply usecase', () => {
 		await removeReply.execute(username, threadId, commentId, replyId);
 
 		expect(mockUserRepository.getIdByUsername).toHaveBeenCalledWith(username);
+		expect(mockThreadRepository.verifyReplyOwner).toHaveBeenCalledWith(userId, replyId);
 		expect(mockThreadRepository.removeReply).toHaveBeenCalledWith(userId, threadId, commentId, replyId);
 	});
 });
