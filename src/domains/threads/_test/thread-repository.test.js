@@ -25,9 +25,9 @@ describe('ThreadRepository interface', () => {
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 		await expect(repository.addReply('user-123', 'thread-123', 'comment-123', createReply)).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-		await expect(repository.removeComment('user-123', 'thread-123', 'comment-123')).rejects
+		await expect(repository.removeComment('thread-123', 'comment-123')).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-		await expect(repository.removeReply('user-123', 'thread-123', 'comment-123', 'reply-234')).rejects
+		await expect(repository.removeReply('thread-123', 'comment-123', 'reply-234')).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 		await expect(repository.verifyCommentOwner('user-123', 'comment-123')).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');

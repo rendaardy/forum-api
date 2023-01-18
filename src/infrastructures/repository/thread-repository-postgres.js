@@ -143,12 +143,11 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
 	}
 
 	/**
-   * @param {string} userId
    * @param {string} threadId
    * @param {string} commentId
    * @returns {Promise<void>}
    */
-	async removeComment(userId, threadId, commentId) {
+	async removeComment(threadId, commentId) {
 		let result = await this.#pool.query({
 			text: `
                 SELECT 
@@ -177,13 +176,12 @@ export class ThreadRepositoryPostgres extends ThreadRepository {
 	}
 
 	/**
-     * @param {string} userId
      * @param {string} threadId
      * @param {string} commentId
      * @param {string} replyId
      * @return {Promise<void>}
      */
-	async removeReply(userId, threadId, commentId, replyId) {
+	async removeReply(threadId, commentId, replyId) {
 		let result = await this.#pool.query({
 			text: `
                 SELECT

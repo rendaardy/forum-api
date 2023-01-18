@@ -33,23 +33,21 @@ export class ThreadRepository {
 	}
 
 	/**
-   * @param {string} _userId
    * @param {string} _threadId
    * @param {string} _commentId
    * @returns {Promise<void>}
    */
-	async removeComment(_userId, _threadId, _commentId) {
+	async removeComment(_threadId, _commentId) {
 		throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 	}
 
 	/**
-     * @param {string} _userId
      * @param {string} _threadId
      * @param {string} _commentId
      * @param {string} _replyId
      * @return {Promise<void>}
      */
-	async removeReply(_userId, _threadId, _commentId, _replyId) {
+	async removeReply(_threadId, _commentId, _replyId) {
 		throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 	}
 
