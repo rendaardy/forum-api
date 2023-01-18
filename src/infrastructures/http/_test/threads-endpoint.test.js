@@ -435,7 +435,7 @@ describe('/threads endpoint', () => {
 			const jsonResponse = JSON.parse(response.payload);
 			expect(response.statusCode).toEqual(404);
 			expect(jsonResponse.status).toEqual('fail');
-			expect(jsonResponse.message).toEqual('Failed to remove a comment. Comment not found');
+			expect(jsonResponse.message).toEqual('Comment not found');
 		});
 	});
 
@@ -810,7 +810,7 @@ describe('/threads endpoint', () => {
 			const jsonResponse = JSON.parse(response.payload);
 			expect(response.statusCode).toEqual(404);
 			expect(jsonResponse.status).toEqual('fail');
-			expect(jsonResponse.message).toEqual('Failed to remove a reply. Reply not found');
+			expect(jsonResponse.message).toEqual('Reply not found');
 		});
 	});
 
