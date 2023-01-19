@@ -19,6 +19,6 @@ jobs:
           script: |
             cd ~/forum-api
             git pull origin main
-            pnpm install
-            pnpm migrate up
-            pm2 restart forum-api
+            ./home/ubuntu/.nvm/versions/node/v18.12.1/bin/node /home/ubuntu/.nvm/versions/node/v18.12.1/bin/pnpm install
+            ./home/ubuntu/.nvm/versions/node/v18.12.1/bin/node /home/ubuntu/.nvm/versions/node/v18.12.1/bin/pnpm migrate up
+            ./home/ubuntu/.local/share/pnpm/pm2 restart forum-api
