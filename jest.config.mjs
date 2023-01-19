@@ -10,7 +10,6 @@ export default {
 	coverageDirectory: 'coverage',
 	coverageProvider: 'v8',
 	extensionsToTreatAsEsm: ['.ts'],
-	maxWorkers: 1,
 	modulePaths: [compilerOptions.baseUrl],
 	moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
 	roots: ['<rootDir>'],
