@@ -38,7 +38,7 @@ describe('GetDetailedThread usecase', () => {
 					id: 'comment-345',
 					username: 'bob',
 					date: expectedDate,
-					content: 'a comment 2',
+					content: '**komentar telah dihapus**',
 					replies: [],
 				},
 			],
