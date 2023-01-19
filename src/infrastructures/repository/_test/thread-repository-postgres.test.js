@@ -359,7 +359,10 @@ describe('ThreadRepositoryPostgres', () => {
 		it('should successfully verify the comment when it\'s owned by the user', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
-			expect(() => threadRepository.verifyCommentOwner('user-abc234', 'comment-abc123')).not.toThrow();
+			expect(() => threadRepository.verifyCommentOwner('user-abc234', 'comment-abc123'))
+				.not.toThrowError('Comment not found');
+			expect(() => threadRepository.verifyCommentOwner('user-abc234', 'comment-abc123'))
+				.not.toThrowError('You\'re prohibited to get access of this resource');
 		});
 	});
 
@@ -402,7 +405,10 @@ describe('ThreadRepositoryPostgres', () => {
 		it('should successfully verify when reply is owned by the user', async () => {
 			const threadRepository = new ThreadRepositoryPostgres(pool, () => '');
 
-			expect(() => threadRepository.verifyReplyOwner('user-abc345', 'reply-abc123')).not.toThrow();
+			expect(() => threadRepository.verifyReplyOwner('user-abc345', 'reply-abc123'))
+				.not.toThrowError('Reply not found');
+			expect(() => threadRepository.verifyReplyOwner('user-abc345', 'reply-abc123'))
+				.not.toThrowError('You\'re prohibited to get access of this resource');
 		});
 	});
 
