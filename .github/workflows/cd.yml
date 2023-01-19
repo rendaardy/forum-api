@@ -17,8 +17,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            PATH=$PATH:/home/${{ secrets.USERNAME }}/.nvm/versions/node/v18.12.1/bin
-            PATH=$PATH:/home/${{ secrets.USERNAME }}/.local/share/pnpm
+            PATH=$PATH:/home/${{ secrets.SSH_USERNAME }}/.nvm/versions/node/v18.12.1/bin
+            PATH=$PATH:/home/${{ secrets.SSH_USERNAME }}/.local/share/pnpm
             cd ~/forum-api
             git pull origin main
             pnpm install
