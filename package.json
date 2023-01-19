@@ -30,7 +30,7 @@
     "lint": "eslint --cache --ext js,cjs,mjs,ts ."
   },
   "engines": {
-    "node": ">=14.19.0 <=18.12.1"
+    "node": ">=14.19.0 <=18"
   },
   "keywords": [],
   "author": "Marenda Setco Ardy <renda_ardy@tutanota.com>",
