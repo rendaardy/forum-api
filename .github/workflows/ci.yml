@@ -29,6 +29,13 @@ jobs:
           pnpm install
           pnpm migrate up
           pnpm test
+      - name: Add Codecov uploader
+        run: |
+          curl -Os https://uploader.codecov.io/latest/linux/codecov 
+          chmod +x codecov 
+          ./codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
         env:
           CI: true
           PGHOST_TEST: ${{ secrets.PGHOST_TEST }}
