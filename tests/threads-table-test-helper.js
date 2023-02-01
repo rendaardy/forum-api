@@ -107,6 +107,14 @@ export class ThreadsTableTestHelper {
 		});
 	}
 
+	static async hardRemoveComments() {
+		await pool.query('DELETE FROM comments');
+	}
+
+	static async hardRemoveReplies() {
+		await pool.query('DELETE FROM replies');
+	}
+
 	static async clearTable() {
 		await pool.query('TRUNCATE TABLE replies CASCADE');
 		await pool.query('TRUNCATE TABLE comments CASCADE');
