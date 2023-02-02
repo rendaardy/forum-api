@@ -74,7 +74,7 @@ helpers.annotate(LogoutUser, [AuthenticationRepository]);
 helpers.annotate(RefreshAuth, [AuthenticationRepository, AuthTokenManager]);
 helpers.annotate(DeleteAuth, [AuthenticationRepository]);
 
-helpers.annotate(AddThread, [UserRepository, ThreadRepository]);
+helpers.annotate(AddThread, [ThreadRepository]);
 helpers.annotate(AddComment, [ThreadRepository, CommentRepository]);
 helpers.annotate(RemoveComment, [ThreadRepository, CommentRepository]);
 helpers.annotate(GetDetailedThread, [ThreadRepository, CommentRepository, ReplyRepository]);
