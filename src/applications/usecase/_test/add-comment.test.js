@@ -30,7 +30,7 @@ describe('AddComment usecase', () => {
         = /** @type {MockedFunction<typeof mockThreadRepository.threadExists>} */(jest.fn()
 				.mockImplementation(() => Promise.resolve(true)));
 		mockCommentRepository.addComment
-        = /** @type {MockedFunction<typeof mockThreadRepository.addComment>} */(jest.fn()
+        = /** @type {MockedFunction<typeof mockCommentRepository.addComment>} */(jest.fn()
 				.mockImplementation(() => Promise.resolve(new CreatedComment({
 					id: 'comment-123',
 					content: 'a comment',
