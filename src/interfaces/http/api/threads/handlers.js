@@ -4,10 +4,10 @@
  * @return {Promise<import("@hapi/hapi").Lifecycle.ReturnValue>}
  */
 export async function postThreadHandler(request, h) {
-	const {username} = /** @type {{ username: string }} */(request.auth.credentials);
+	const {id: userId} = /** @type {{ id: string }} */(request.auth.credentials);
 	const {addThread} = request.server.methods;
 
-	const createdThread = await addThread(username, request.payload);
+	const createdThread = await addThread(userId, request.payload);
 
 	return h.response({
 		status: 'success',
@@ -24,10 +24,10 @@ export async function postThreadHandler(request, h) {
  */
 export async function postCommentHandler(request, h) {
 	const {threadId} = request.params;
-	const {username} = /** @type {{ username: string }} */(request.auth.credentials);
+	const {id: userId} = /** @type {{ id: string }} */(request.auth.credentials);
 	const {addComment} = request.server.methods;
 
-	const createdComment = await addComment(username, threadId, request.payload);
+	const createdComment = await addComment(userId, threadId, request.payload);
 
 	return h.response({
 		status: 'success',
@@ -44,10 +44,10 @@ export async function postCommentHandler(request, h) {
  */
 export async function deleteCommentHandler(request, _h) {
 	const {threadId, commentId} = request.params;
-	const {username} = /** @type {{ username: string }} */(request.auth.credentials);
+	const {id: userId} = /** @type {{ id: string }} */(request.auth.credentials);
 	const {removeComment} = request.server.methods;
 
-	await removeComment(username, threadId, commentId);
+	await removeComment(userId, threadId, commentId);
 
 	return {status: 'success'};
 }
@@ -59,10 +59,10 @@ export async function deleteCommentHandler(request, _h) {
  */
 export async function postReplyHandler(request, h) {
 	const {threadId, commentId} = request.params;
-	const {username} = /** @type {{ username: string }} */(request.auth.credentials);
+	const {id: userId} = /** @type {{ id: string }} */(request.auth.credentials);
 	const {addReply} = request.server.methods;
 
-	const createdComment = await addReply(username, threadId, commentId, request.payload);
+	const createdComment = await addReply(userId, threadId, commentId, request.payload);
 
 	return h.response({
 		status: 'success',
@@ -79,10 +79,10 @@ export async function postReplyHandler(request, h) {
  */
 export async function deleteReplyHandler(request, _h) {
 	const {threadId, commentId, replyId} = request.params;
-	const {username} = /** @type {{ username: string }} */(request.auth.credentials);
+	const {id: userId} = /** @type {{ id: string }} */(request.auth.credentials);
 	const {removeReply} = request.server.methods;
 
-	await removeReply(username, threadId, commentId, replyId);
+	await removeReply(userId, threadId, commentId, replyId);
 
 	return {status: 'success'};
 }
