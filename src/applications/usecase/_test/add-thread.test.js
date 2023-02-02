@@ -1,6 +1,5 @@
 import {describe, it, expect, jest} from '@jest/globals';
 
-import {UserRepository} from '#domains/users/user-repository.js';
 import {ThreadRepository} from '#domains/threads/thread-repository.js';
 import {CreateThread} from '#domains/threads/entities/create-thread.js';
 import {CreatedThread} from '#domains/threads/entities/created-thread.js';
@@ -17,19 +16,14 @@ describe('AddThread usecase', () => {
 			title: 'a thread',
 			body: 'a thread body',
 		};
-		const username = 'dicoding';
+		const userId = 'user-123';
 		const expectedCreatedThread = new CreatedThread({
 			id: 'thread-123',
 			title: 'a thread',
 			owner: 'user-123',
 		});
-		const expectedUserId = 'user-123';
-		const mockUserRepository = new UserRepository();
 		const mockThreadRepository = new ThreadRepository();
 
-		mockUserRepository.getIdByUsername
-      = /** @type {MockedFunction<typeof mockUserRepository.getIdByUsername>} */(jest.fn()
-				.mockImplementation(() => Promise.resolve('user-123')));
 		mockThreadRepository.addThread
       = /** @type {MockedFunction<typeof mockThreadRepository.addThread>} */(jest.fn()
 				.mockImplementation(() => Promise.resolve(new CreatedThread({
@@ -38,13 +32,12 @@ describe('AddThread usecase', () => {
 					owner: 'user-123',
 				}))));
 
-		const addThread = new AddThread(mockUserRepository, mockThreadRepository);
+		const addThread = new AddThread(mockThreadRepository);
 
-		const createdThread = await addThread.execute(username, payload);
+		const createdThread = await addThread.execute(userId, payload);
 
 		expect(createdThread).toStrictEqual(expectedCreatedThread);
-		expect(mockUserRepository.getIdByUsername).toHaveBeenCalledWith(username);
-		expect(mockThreadRepository.addThread).toHaveBeenCalledWith(expectedUserId, new CreateThread({
+		expect(mockThreadRepository.addThread).toHaveBeenCalledWith(userId, new CreateThread({
 			title: payload.title,
 			body: payload.body,
 		}));
