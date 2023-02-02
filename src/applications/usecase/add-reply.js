@@ -31,11 +31,11 @@ export class AddReply {
 		]);
 
 		if (!threadExists) {
-			throw new NotFoundError('Failed to add new reply. Thread not found');
+			throw new NotFoundError('Failed to create a new reply. Thread not found');
 		}
 
 		if (!commentExists) {
-			throw new NotFoundError('Failed to add new reply. Comment not found');
+			throw new NotFoundError('Failed to create a new reply. Comment not found');
 		}
 
 		const createReply = new CreateReply(payload);

@@ -64,7 +64,7 @@ describe('AddComment usecase', () => {
 		const addComment = new AddComment(mockThreadRepository, mockCommentRepository);
 
 		await expect(() => addComment.execute(userId, threadId, payload))
-			.rejects.toThrowError('Failed to add new comment. Thread not found');
+			.rejects.toThrowError('Failed to create a new comment. Thread not found');
 		expect(mockThreadRepository.threadExists).toHaveBeenCalledWith(threadId);
 		expect(mockCommentRepository.addComment).not.toHaveBeenCalled();
 	});

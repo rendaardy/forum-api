@@ -24,7 +24,7 @@ export class AddComment {
 		const threadExists = await this.#threadRepository.threadExists(threadId);
 
 		if (!threadExists) {
-			throw new NotFoundError('Failed to add new comment. Thread not found');
+			throw new NotFoundError('Failed to create a new comment. Thread not found');
 		}
 
 		const createComment = new CreateComment(payload);

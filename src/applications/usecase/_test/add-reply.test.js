@@ -86,7 +86,7 @@ describe('AddReply usecase', () => {
 		);
 
 		await expect(() => addReply.execute(userId, threadId, commentId, payload))
-			.rejects.toThrowError('Failed to add new reply. Thread not found');
+			.rejects.toThrowError('Failed to create a new reply. Thread not found');
 		expect(mockThreadRepository.threadExists).toHaveBeenCalledWith(threadId);
 		expect(mockReplyRepository.addReply).not.toHaveBeenCalled();
 	});
@@ -117,7 +117,7 @@ describe('AddReply usecase', () => {
 		);
 
 		await expect(() => addReply.execute(userId, threadId, commentId, payload))
-			.rejects.toThrowError('Failed to add new reply. Comment not found');
+			.rejects.toThrowError('Failed to create a new reply. Comment not found');
 		expect(mockCommentRepository.commentExists).toHaveBeenCalledWith(commentId);
 		expect(mockReplyRepository.addReply).not.toHaveBeenCalled();
 	});
