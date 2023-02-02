@@ -210,7 +210,7 @@ describe('ReplyRepositoryPostgres', () => {
 		it('should return a list of detailed replies from a comment', async () => {
 			const replyRepository = new ReplyRepositoryPostgres(pool, () => '');
 
-			const detailedReplies = await replyRepository.getAllDetailedRepliesFromComment('comment-abc123');
+			const [, detailedReplies] = await replyRepository.getAllDetailedRepliesFromComment('comment-abc123');
 
 			expect(detailedReplies).toHaveLength(2);
 			expect(detailedReplies[0].id).toEqual('reply-abc123');
@@ -227,7 +227,7 @@ describe('ReplyRepositoryPostgres', () => {
 			const replyRepository = new ReplyRepositoryPostgres(pool, () => '');
 
 			await replyRepository.removeReply('reply-abc123');
-			const detailedReplies = await replyRepository.getAllDetailedRepliesFromComment('comment-abc123');
+			const [, detailedReplies] = await replyRepository.getAllDetailedRepliesFromComment('comment-abc123');
 
 			expect(detailedReplies).toHaveLength(2);
 			expect(detailedReplies[0].id).toEqual('reply-abc123');

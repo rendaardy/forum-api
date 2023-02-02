@@ -39,7 +39,7 @@ export class ReplyRepository {
 
 	/**
      * @param {string} _commentId
-     * @returns {Promise<Array<import("#domains/threads/entities/detailed-reply.js").DetailedReply>>}
+     * @returns {Promise<[string, Array<import("#domains/threads/entities/detailed-reply.js").DetailedReply>]>}
      */
 	async getAllDetailedRepliesFromComment(_commentId) {
 		throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');

@@ -105,7 +105,7 @@ export class ReplyRepositoryPostgres extends ReplyRepository {
 
 	/**
      * @param {string} commentId
-     * @returns {Promise<Array<import("#domains/threads/entities/detailed-reply.js").DetailedReply>>}
+     * @returns {Promise<[string, Array<import("#domains/threads/entities/detailed-reply.js").DetailedReply>]>}
      */
 	async getAllDetailedRepliesFromComment(commentId) {
 		const query = {
@@ -126,12 +126,12 @@ export class ReplyRepositoryPostgres extends ReplyRepository {
 		};
 		const result = await this.#pool.query(query);
 
-		return result.rows.map(it => new DetailedReply({
+		return [commentId, result.rows.map(it => new DetailedReply({
 			id: it.id,
 			username: it.username,
 			content: it.content,
 			date: it.date,
 			isDeleted: it.is_deleted,
-		}));
+		}))];
 	}
 }
