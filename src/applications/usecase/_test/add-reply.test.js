@@ -1,6 +1,7 @@
 import {describe, it, expect, jest} from '@jest/globals';
 
-import {UserRepository} from '#domains/users/user-repository.js';
+import {ReplyRepository} from '#domains/threads/reply-repository.js';
+import {CommentRepository} from '#domains/threads/comment-repository.js';
 import {ThreadRepository} from '#domains/threads/thread-repository.js';
 import {CreateReply} from '#domains/threads/entities/create-reply.js';
 import {CreatedReply} from '#domains/threads/entities/created-reply.js';
@@ -16,38 +17,108 @@ describe('AddReply usecase', () => {
 		const payload = {
 			content: 'a comment',
 		};
-		const username = 'dicoding';
 		const threadId = 'thread-123';
 		const commentId = 'comment-123';
-		const expectedUserId = 'user-123';
+		const userId = 'user-123';
 		const expectedCreatedReply = new CreatedReply({
 			id: 'reply-123',
 			content: 'a reply comment',
 			owner: 'user-123',
 		});
-		const mockUserRepository = new UserRepository();
+		const mockReplyRepository = new ReplyRepository();
+		const mockCommentRepository = new CommentRepository();
 		const mockThreadRepository = new ThreadRepository();
 
-		mockUserRepository.getIdByUsername
-      = /** @type {MockedFunction<typeof mockUserRepository.getIdByUsername>} */(jest.fn()
-				.mockImplementation(() => Promise.resolve('user-123')));
-		mockThreadRepository.addReply
-      = /** @type {MockedFunction<typeof mockThreadRepository.addReply>} */(jest.fn()
+		mockThreadRepository.threadExists
+        = /** @type {MockedFunction<typeof mockThreadRepository.threadExists>} */(jest.fn()
+				.mockImplementation(() => Promise.resolve(true)));
+		mockCommentRepository.commentExists
+        = /** @type {MockedFunction<typeof mockCommentRepository.commentExists>} */(jest.fn()
+				.mockImplementation(() => Promise.resolve(true)));
+		mockReplyRepository.addReply
+        = /** @type {MockedFunction<typeof mockReplyRepository.addReply>} */(jest.fn()
 				.mockImplementation(() => Promise.resolve(new CreatedReply({
 					id: 'reply-123',
 					content: 'a reply comment',
 					owner: 'user-123',
 				}))));
 
-		const addReply = new AddReply(mockUserRepository, mockThreadRepository);
+		const addReply = new AddReply(
+			mockThreadRepository,
+			mockCommentRepository,
+			mockReplyRepository,
+		);
 
-		const createdComment = await addReply.execute(username, threadId, commentId, payload);
+		const createdComment = await addReply.execute(userId, threadId, commentId, payload);
 
 		expect(createdComment).toStrictEqual(expectedCreatedReply);
-		expect(mockUserRepository.getIdByUsername).toHaveBeenCalledWith(username);
-		expect(mockThreadRepository.addReply)
-			.toHaveBeenCalledWith(expectedUserId, threadId, commentId, new CreateReply({
+		expect(mockThreadRepository.threadExists).toHaveBeenCalledWith(threadId);
+		expect(mockCommentRepository.commentExists).toHaveBeenCalledWith(commentId);
+		expect(mockReplyRepository.addReply)
+			.toHaveBeenCalledWith(userId, commentId, new CreateReply({
 				content: payload.content,
 			}));
+	});
+
+	it('should throw an error when thread doesn\'t exist', async () => {
+		const payload = {
+			content: 'a comment',
+		};
+		const threadId = 'thread-123';
+		const commentId = 'comment-123';
+		const userId = 'user-123';
+		const mockReplyRepository = new ReplyRepository();
+		const mockCommentRepository = new CommentRepository();
+		const mockThreadRepository = new ThreadRepository();
+
+		mockThreadRepository.threadExists
+        = /** @type {MockedFunction<typeof mockThreadRepository.threadExists>} */(jest.fn()
+				.mockImplementation(() => Promise.resolve(false)));
+		mockCommentRepository.commentExists
+        = /** @type {MockedFunction<typeof mockCommentRepository.commentExists>} */(jest.fn()
+				.mockImplementation(() => Promise.resolve(true)));
+		jest.spyOn(mockReplyRepository, 'addReply');
+
+		const addReply = new AddReply(
+			mockThreadRepository,
+			mockCommentRepository,
+			mockReplyRepository,
+		);
+
+		await expect(() => addReply.execute(userId, threadId, commentId, payload))
+			.rejects.toThrowError('Failed to add new reply. Thread not found');
+		expect(mockThreadRepository.threadExists).toHaveBeenCalledWith(threadId);
+		expect(mockReplyRepository.addReply).not.toHaveBeenCalled();
+	});
+
+	it('should throw an error when comment doesn\'t exist', async () => {
+		const payload = {
+			content: 'a comment',
+		};
+		const threadId = 'thread-123';
+		const commentId = 'comment-123';
+		const userId = 'user-123';
+		const mockReplyRepository = new ReplyRepository();
+		const mockCommentRepository = new CommentRepository();
+		const mockThreadRepository = new ThreadRepository();
+
+		mockThreadRepository.threadExists
+        = /** @type {MockedFunction<typeof mockThreadRepository.threadExists>} */(jest.fn()
+				.mockImplementation(() => Promise.resolve(true)));
+		mockCommentRepository.commentExists
+        = /** @type {MockedFunction<typeof mockCommentRepository.commentExists>} */(jest.fn()
+				.mockImplementation(() => Promise.resolve(false)));
+		jest.spyOn(mockReplyRepository, 'addReply');
+
+		const addReply = new AddReply(
+			mockThreadRepository,
+			mockCommentRepository,
+			mockReplyRepository,
+		);
+
+		await expect(() => addReply.execute(userId, threadId, commentId, payload))
+			.rejects.toThrowError('Failed to add new reply. Comment not found');
+		expect(mockCommentRepository.commentExists).toHaveBeenCalledWith(commentId);
+		expect(mockReplyRepository.addReply).not.toHaveBeenCalled();
 	});
 });

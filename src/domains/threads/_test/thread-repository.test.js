@@ -33,6 +33,8 @@ describe('ThreadRepository interface', () => {
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 		await expect(repository.verifyReplyOwner('user-123', 'reply-123')).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+		await expect(repository.threadExists('thread-123')).rejects
+			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 		await expect(repository.getDetailedThread('thread-123')).rejects
 			.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 	});

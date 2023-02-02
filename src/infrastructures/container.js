@@ -16,12 +16,16 @@ import {JwtTokenManager} from './security/jwt-token-manager.js';
 import {UserRepositoryPostgres} from './repository/user-repository-postgres.js';
 import {AuthenticationRepositoryPostgres} from './repository/authentication-repository-postgres.js';
 import {ThreadRepositoryPostgres} from './repository/thread-repository-postgres.js';
+import {CommentRepositoryPostgres} from './repository/comment-repository-postgres.js';
+import {ReplyRepositoryPostgres} from './repository/reply-repository-postgres.js';
 
 import {PasswordHash} from '#applications/security/password-hash.js';
 import {UserRepository} from '#domains/users/user-repository.js';
 import {AuthTokenManager} from '#applications/security/auth-token-manager.js';
 import {AuthenticationRepository} from '#domains/authentications/authentication-repository.js';
 import {ThreadRepository} from '#domains/threads/thread-repository.js';
+import {CommentRepository} from '#domains/threads/comment-repository.js';
+import {ReplyRepository} from '#domains/threads/reply-repository.js';
 
 import {AddUser} from '#applications/usecase/add-user.js';
 import {LoginUser} from '#applications/usecase/login-user.js';
@@ -51,6 +55,8 @@ helpers.annotate(PasswordHash);
 helpers.annotate(AuthenticationRepository);
 helpers.annotate(AuthTokenManager);
 helpers.annotate(ThreadRepository);
+helpers.annotate(CommentRepository);
+helpers.annotate(ReplyRepository);
 
 // Implementations
 helpers.annotate(BcryptPasswordHash, [Types.Bcrypt]);
@@ -58,6 +64,8 @@ helpers.annotate(JwtTokenManager, [Types.Jwt, Types.AccessTokenKey, Types.Refres
 helpers.annotate(UserRepositoryPostgres, [Types.Postgres, Types.NanoId]);
 helpers.annotate(AuthenticationRepositoryPostgres, [Types.Postgres]);
 helpers.annotate(ThreadRepositoryPostgres, [Types.Postgres, Types.NanoId]);
+helpers.annotate(CommentRepositoryPostgres, [Types.Postgres, Types.NanoId]);
+helpers.annotate(ReplyRepositoryPostgres, [Types.Postgres, Types.NanoId]);
 
 // Usecases
 helpers.annotate(AddUser, [UserRepository, PasswordHash]);
@@ -67,11 +75,11 @@ helpers.annotate(RefreshAuth, [AuthenticationRepository, AuthTokenManager]);
 helpers.annotate(DeleteAuth, [AuthenticationRepository]);
 
 helpers.annotate(AddThread, [UserRepository, ThreadRepository]);
-helpers.annotate(AddComment, [UserRepository, ThreadRepository]);
-helpers.annotate(RemoveComment, [UserRepository, ThreadRepository]);
-helpers.annotate(GetDetailedThread, [ThreadRepository]);
-helpers.annotate(AddReply, [UserRepository, ThreadRepository]);
-helpers.annotate(RemoveReply, [UserRepository, ThreadRepository]);
+helpers.annotate(AddComment, [ThreadRepository, CommentRepository]);
+helpers.annotate(RemoveComment, [ThreadRepository, CommentRepository]);
+helpers.annotate(GetDetailedThread, [ThreadRepository, CommentRepository, ReplyRepository]);
+helpers.annotate(AddReply, [ThreadRepository, CommentRepository, ReplyRepository]);
+helpers.annotate(RemoveReply, [ThreadRepository, CommentRepository, ReplyRepository]);
 
 const thirdPartyModule = new ContainerModule(bind => {
 	bind(Types.Bcrypt).toConstantValue(bcrypt);
@@ -89,6 +97,8 @@ const applicationModule = new ContainerModule(bind => {
 	bind(UserRepository).to(UserRepositoryPostgres);
 	bind(AuthenticationRepository).to(AuthenticationRepositoryPostgres);
 	bind(ThreadRepository).to(ThreadRepositoryPostgres);
+	bind(CommentRepository).to(CommentRepositoryPostgres);
+	bind(ReplyRepository).to(ReplyRepositoryPostgres);
 
 	bind(AddUser).to(AddUser);
 	bind(LoginUser).to(LoginUser);

@@ -68,6 +68,14 @@ export class ThreadRepository {
 	}
 
 	/**
+     * @param {string} _threadId
+     * @returns {Promise<boolean>}
+     */
+	async threadExists(_threadId) {
+		throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+	}
+
+	/**
    * @param {string} _threadId
    * @returns {Promise<import("#domains/threads/entities/detailed-thread.js").DetailedThread>}
    */

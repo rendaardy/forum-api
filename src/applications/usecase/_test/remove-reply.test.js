@@ -1,6 +1,7 @@
 import {describe, it, expect, jest} from '@jest/globals';
 
-import {UserRepository} from '#domains/users/user-repository.js';
+import {ReplyRepository} from '#domains/threads/reply-repository.js';
+import {CommentRepository} from '#domains/threads/comment-repository.js';
 import {ThreadRepository} from '#domains/threads/thread-repository.js';
 import {RemoveReply} from '../remove-reply.js';
 
@@ -11,30 +12,100 @@ import {RemoveReply} from '../remove-reply.js';
 
 describe('RemoveReply usecase', () => {
 	it('should orchestrate the remove reply correctly', async () => {
-		const username = 'dicoding';
 		const userId = 'user-123';
 		const threadId = 'thread-123';
 		const commentId = 'comment-123';
 		const replyId = 'reply-234';
-		const mockUserRepository = new UserRepository();
+		const mockReplyRepository = new ReplyRepository();
+		const mockCommentRepository = new CommentRepository();
 		const mockThreadRepository = new ThreadRepository();
 
-		mockUserRepository.getIdByUsername
-		= /** @type {MockedFunction<typeof mockUserRepository.getIdByUsername>} */ (jest.fn()
-				.mockImplementation(() => Promise.resolve('user-123')));
-		mockThreadRepository.verifyReplyOwner
-        = /** @type {MockedFunction<typeof mockThreadRepository.verifyReplyOwner>} */ (jest.fn()
+		mockThreadRepository.threadExists
+        = /** @type {MockedFunction<typeof mockThreadRepository.threadExists>} */(jest.fn()
+				.mockImplementation(() => Promise.resolve(true)));
+		mockCommentRepository.commentExists
+        = /** @type {MockedFunction<typeof mockCommentRepository.commentExists>} */(jest.fn()
+				.mockImplementation(() => Promise.resolve(true)));
+		mockReplyRepository.verifyReplyOwner
+        = /** @type {MockedFunction<typeof mockReplyRepository.verifyReplyOwner>} */ (jest.fn()
 				.mockImplementation(() => Promise.resolve()));
-		mockThreadRepository.removeReply
-		= /** @type {MockedFunction<typeof mockThreadRepository.removeReply>} */ (jest.fn()
+		mockReplyRepository.removeReply
+		= /** @type {MockedFunction<typeof mockReplyRepository.removeReply>} */ (jest.fn()
 				.mockImplementation(() => Promise.resolve()));
 
-		const removeReply = new RemoveReply(mockUserRepository, mockThreadRepository);
+		const removeReply = new RemoveReply(
+			mockThreadRepository,
+			mockCommentRepository,
+			mockReplyRepository,
+		);
 
-		await removeReply.execute(username, threadId, commentId, replyId);
+		await removeReply.execute(userId, threadId, commentId, replyId);
 
-		expect(mockUserRepository.getIdByUsername).toHaveBeenCalledWith(username);
-		expect(mockThreadRepository.verifyReplyOwner).toHaveBeenCalledWith(userId, replyId);
-		expect(mockThreadRepository.removeReply).toHaveBeenCalledWith(threadId, commentId, replyId);
+		expect(mockThreadRepository.threadExists).toHaveBeenCalledWith(threadId);
+		expect(mockCommentRepository.commentExists).toHaveBeenCalledWith(commentId);
+		expect(mockReplyRepository.verifyReplyOwner).toHaveBeenCalledWith(userId, replyId);
+		expect(mockReplyRepository.removeReply).toHaveBeenCalledWith(replyId);
+	});
+
+	it('should throw an error when thread doesn\'t exist', async () => {
+		const userId = 'user-123';
+		const threadId = 'thread-123';
+		const commentId = 'comment-123';
+		const replyId = 'reply-234';
+		const mockReplyRepository = new ReplyRepository();
+		const mockCommentRepository = new CommentRepository();
+		const mockThreadRepository = new ThreadRepository();
+
+		mockThreadRepository.threadExists
+        = /** @type {MockedFunction<typeof mockThreadRepository.threadExists>} */(jest.fn()
+				.mockImplementation(() => Promise.resolve(false)));
+		mockCommentRepository.commentExists
+        = /** @type {MockedFunction<typeof mockCommentRepository.commentExists>} */(jest.fn()
+				.mockImplementation(() => Promise.resolve(true)));
+		jest.spyOn(mockReplyRepository, 'verifyReplyOwner');
+		jest.spyOn(mockReplyRepository, 'removeReply');
+
+		const removeReply = new RemoveReply(
+			mockThreadRepository,
+			mockCommentRepository,
+			mockReplyRepository,
+		);
+
+		await expect(() => removeReply.execute(userId, threadId, commentId, replyId))
+			.rejects.toThrowError('Failed to remove a reply. Thread not found');
+		expect(mockThreadRepository.threadExists).toHaveBeenCalledWith(threadId);
+		expect(mockReplyRepository.verifyReplyOwner).not.toHaveBeenCalled();
+		expect(mockReplyRepository.removeReply).not.toHaveBeenCalled();
+	});
+
+	it('should throw an error when comment doesn\'t exist', async () => {
+		const userId = 'user-123';
+		const threadId = 'thread-123';
+		const commentId = 'comment-123';
+		const replyId = 'reply-234';
+		const mockReplyRepository = new ReplyRepository();
+		const mockCommentRepository = new CommentRepository();
+		const mockThreadRepository = new ThreadRepository();
+
+		mockThreadRepository.threadExists
+        = /** @type {MockedFunction<typeof mockThreadRepository.threadExists>} */(jest.fn()
+				.mockImplementation(() => Promise.resolve(true)));
+		mockCommentRepository.commentExists
+        = /** @type {MockedFunction<typeof mockCommentRepository.commentExists>} */(jest.fn()
+				.mockImplementation(() => Promise.resolve(false)));
+		jest.spyOn(mockReplyRepository, 'verifyReplyOwner');
+		jest.spyOn(mockReplyRepository, 'removeReply');
+
+		const removeReply = new RemoveReply(
+			mockThreadRepository,
+			mockCommentRepository,
+			mockReplyRepository,
+		);
+
+		await expect(() => removeReply.execute(userId, threadId, commentId, replyId))
+			.rejects.toThrowError('Failed to remove a reply. Comment not found');
+		expect(mockCommentRepository.commentExists).toHaveBeenCalledWith(commentId);
+		expect(mockReplyRepository.verifyReplyOwner).not.toHaveBeenCalled();
+		expect(mockReplyRepository.removeReply).not.toHaveBeenCalled();
 	});
 });

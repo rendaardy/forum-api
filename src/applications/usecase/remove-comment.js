@@ -1,26 +1,32 @@
+import {NotFoundError} from '#commons/exceptions/notfound-error.js';
+
 export class RemoveComment {
-	#userRepository;
 	#threadRepository;
+	#commentRepository;
 
 	/**
-   * @param {import("#domains/users/user-repository.js").UserRepository} userRepository
-   * @param {import("#domains/threads/thread-repository.js").ThreadRepository} threadRepository
-   */
-	constructor(userRepository, threadRepository) {
-		this.#userRepository = userRepository;
+     * @param {import("#domains/threads/thread-repository.js").ThreadRepository} threadRepository
+     * @param {import("#domains/threads/comment-repository.js").CommentRepository} commentRepository
+     */
+	constructor(threadRepository, commentRepository) {
 		this.#threadRepository = threadRepository;
+		this.#commentRepository = commentRepository;
 	}
 
 	/**
-   * @param {string} username
+     * @param {string} userId
      * @param {string} threadId
-   * @param {string} commentId
-   * @returns {Promise<void>}
-   */
-	async execute(username, threadId, commentId) {
-		const userId = await this.#userRepository.getIdByUsername(username);
+     * @param {string} commentId
+     * @returns {Promise<void>}
+     */
+	async execute(userId, threadId, commentId) {
+		const threadExists = await this.#threadRepository.threadExists(threadId);
 
-		await this.#threadRepository.verifyCommentOwner(userId, commentId);
-		await this.#threadRepository.removeComment(threadId, commentId);
+		if (!threadExists) {
+			throw new NotFoundError('Failed to remove a comment. Thread not found');
+		}
+
+		await this.#commentRepository.verifyCommentOwner(userId, commentId);
+		await this.#commentRepository.removeComment(commentId);
 	}
 }
