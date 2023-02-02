@@ -58,9 +58,7 @@
   "dependencies": {
     "@hapi/hapi": "^21.1.0",
     "@hapi/jwt": "^3.0.0",
-    "@renda_ardy/pg-error-constants": "^1.0.2",
     "bcrypt": "^5.1.0",
-    "core-js": "^3.27.1",
     "dotenv": "^16.0.3",
     "hapi-pino": "^11.0.1",
     "inversify": "^6.0.1",
