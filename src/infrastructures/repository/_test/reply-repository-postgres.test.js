@@ -154,7 +154,7 @@ describe('ReplyRepositoryPostgres', () => {
 		});
 	});
 
-	describe('isReplyExists method', () => {
+	describe('replyExists method', () => {
 		beforeEach(async () => {
 			await ThreadsTableTestHelper.addReply({
 				id: 'reply-abc123',

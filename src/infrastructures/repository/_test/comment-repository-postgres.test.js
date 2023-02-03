@@ -147,7 +147,7 @@ describe('CommentRepositoryPostgres', () => {
 		});
 	});
 
-	describe('isCommentExists method', () => {
+	describe('commentExists method', () => {
 		beforeEach(async () => {
 			await ThreadsTableTestHelper.addComment({
 				id: 'comment-abc123',
