@@ -18,7 +18,7 @@ export class DetailedReply {
 		this.id = id;
 		this.username = username;
 		this.date = date;
-		this.content = payload?.isDeleted ? '**balasan telah dihapus**' : content;
+		this.content = payload.isDeleted ? '**balasan telah dihapus**' : content;
 	}
 
 	#validatePayload({id, username, date, content}: Payload): {

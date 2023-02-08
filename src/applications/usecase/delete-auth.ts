@@ -19,7 +19,7 @@ export class DeleteAuth {
 	}
 
 	#validatePayload(payload: Payload): {refreshToken: string} {
-		if (!payload?.refreshToken) {
+		if (!payload.refreshToken) {
 			throw new Error('DELETE_AUTHENTICATION_USECASE.NOT_CONTAIN_REFRESH_TOKEN');
 		}
 

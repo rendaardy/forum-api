@@ -22,7 +22,7 @@ export class DetailedComment {
 		this.id = id;
 		this.username = username;
 		this.date = date;
-		this.content = payload?.isDeleted ? '**komentar telah dihapus**' : content;
+		this.content = payload.isDeleted ? '**komentar telah dihapus**' : content;
 		this.replies = [];
 
 		for (const reply of replies) {

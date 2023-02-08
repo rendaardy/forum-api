@@ -19,7 +19,7 @@ export class LogoutUser {
 	}
 
 	#validatePayload(payload: Payload): {refreshToken: string} {
-		if (!payload?.refreshToken) {
+		if (!payload.refreshToken) {
 			throw new Error('USER_LOGOUT_USECASE.NOT_CONTAIN_REFRESH_TOKEN');
 		}
 
