@@ -36,7 +36,5 @@ export async function load(url, context, nextLoad) {
 		};
 	}
 
-	context.format ??= 'module';
-
 	return nextLoad(url, context);
 }
