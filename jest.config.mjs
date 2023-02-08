@@ -15,8 +15,7 @@ export default {
 	roots: ['<rootDir>'],
 	setupFiles: ['dotenv/config'],
 	transform: {
-		'^.+\\.[tj]sx?$': ['ts-jest', {useESM: true, isolatedModules: true}],
+		'^.+\\.[tj]sx?$': ['@swc/jest'],
 	},
-	preset: 'ts-jest/presets/js-with-ts-esm',
 	watchman: false,
 };
