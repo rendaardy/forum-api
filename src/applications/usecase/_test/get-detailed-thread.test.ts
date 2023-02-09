@@ -90,6 +90,11 @@ describe('GetDetailedThread usecase', () => {
 					}),
 				],
 			]));
+		mockCommentRepository.getTotalCommentLikesById = jest
+			.fn<typeof mockCommentRepository.getTotalCommentLikesById>()
+			.mockImplementation(async commentId => commentId === 'comment-123'
+				? Promise.resolve(['comment-123', 2])
+				: Promise.resolve(['comment-345', 0]));
 
 		const getDetailedThread = new GetDetailedThread(
 			mockThreadRepository,
@@ -103,5 +108,6 @@ describe('GetDetailedThread usecase', () => {
 		expect(mockThreadRepository.getDetailedThread).toHaveBeenCalledWith(threadId);
 		expect(mockCommentRepository.getAllDetailedCommentsFromThread).toHaveBeenCalledWith(threadId);
 		expect(mockReplyRepository.getAllDetailedRepliesFromComment).toHaveBeenCalledTimes(2);
+		expect(mockCommentRepository.getTotalCommentLikesById).toHaveBeenCalledTimes(2);
 	});
 });
