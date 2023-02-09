@@ -18,8 +18,6 @@ describe('CommentRepository interface', () => {
 			.rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 		await expect(async () => commentRepository.hasBeenLiked('user-abc123', 'comment-abc123'))
 			.rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-		await expect(async () => commentRepository.getTotalCommentLikesById('comment-abc123'))
-			.rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 		await expect(async () => commentRepository.getAllTotalCommentLikes())
 			.rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 		await expect(async () => commentRepository.verifyCommentOwner('user-abc123', 'comment-abc123'))
