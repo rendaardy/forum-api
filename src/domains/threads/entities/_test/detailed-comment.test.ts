@@ -19,6 +19,7 @@ describe('A DetailedComment entity', () => {
 			username: 123,
 			date: true,
 			content: null,
+			likeCount: '2',
 			replies: [],
 		};
 
@@ -31,6 +32,7 @@ describe('A DetailedComment entity', () => {
 			username: 'dicoding',
 			date: new Date(),
 			content: 'a comment',
+			likeCount: 2,
 			replies: [
 				{
 					id: 'reply-xxx',
@@ -48,6 +50,7 @@ describe('A DetailedComment entity', () => {
 			username: 'dicoding',
 			date: new Date(),
 			content: 'a comment',
+			likeCount: 2,
 			replies: [
 				{
 					id: 'reply-xx',
@@ -67,6 +70,7 @@ describe('A DetailedComment entity', () => {
 			username: 'dicoding',
 			date: new Date(),
 			content: 'a comment',
+			likeCount: 2,
 			replies: [
 				{
 					id: 'reply-xxx',
@@ -77,12 +81,13 @@ describe('A DetailedComment entity', () => {
 			],
 		};
 
-		const {id, username, date, content, replies} = new DetailedComment(payload);
+		const {id, username, date, content, likeCount, replies} = new DetailedComment(payload);
 
 		expect(id).toEqual(payload.id);
 		expect(username).toEqual(payload.username);
 		expect(date).toEqual(payload.date);
 		expect(content).toEqual(payload.content);
+		expect(likeCount).toEqual(payload.likeCount);
 		expect(replies).toEqual(payload.replies);
 
 		for (const [i, reply] of Object.entries(replies)) {
@@ -100,6 +105,7 @@ describe('A DetailedComment entity', () => {
 			username: 'dicoding',
 			date: new Date(),
 			content: 'a comment',
+			likeCount: 2,
 			isDeleted: true,
 			replies: [
 				{
@@ -111,12 +117,13 @@ describe('A DetailedComment entity', () => {
 			],
 		};
 
-		const {id, username, date, content, replies} = new DetailedComment(payload);
+		const {id, username, date, content, likeCount, replies} = new DetailedComment(payload);
 
 		expect(id).toEqual(payload.id);
 		expect(username).toEqual(payload.username);
 		expect(date).toEqual(payload.date);
 		expect(content).toEqual('**komentar telah dihapus**');
+		expect(likeCount).toEqual(payload.likeCount);
 		expect(replies).toEqual(payload.replies);
 
 		for (const [i, reply] of Object.entries(replies)) {

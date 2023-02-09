@@ -60,6 +60,7 @@ describe('A DetailedThread entity', () => {
 					username: 123,
 					date: new Date(),
 					content: 'a comment',
+					likeCount: '2',
 					replies: [],
 				},
 			],
@@ -81,6 +82,7 @@ describe('A DetailedThread entity', () => {
 					username: 'johndoe',
 					date: new Date(),
 					content: 'a comment',
+					likeCount: 2,
 					replies: [
 						{
 							id: 'reply-123',
@@ -107,6 +109,7 @@ describe('A DetailedThread entity', () => {
 			expect(comment.id).toEqual(payload.comments[Number(i)].id);
 			expect(comment.date).toEqual(payload.comments[Number(i)].date);
 			expect(comment.content).toEqual(payload.comments[Number(i)].content);
+			expect(comment.likeCount).toEqual(payload.comments[Number(i)].likeCount);
 			expect(comment.username).toEqual(payload.comments[Number(i)].username);
 		}
 	});
