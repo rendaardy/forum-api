@@ -988,6 +988,16 @@ describe('/threads endpoint', () => {
 				replyTo: 'thread-abc123',
 				content: 'a comment 2',
 			});
+			await ThreadsTableTestHelper.likeComment({
+				id: 'like-abc123',
+				userId: 'user-abc123',
+				commentId: 'comment-abc123',
+			});
+			await ThreadsTableTestHelper.likeComment({
+				id: 'like-abc234',
+				userId: 'user-abc234',
+				commentId: 'comment-abc123',
+			});
 		});
 
 		afterEach(async () => {
@@ -1028,9 +1038,11 @@ describe('/threads endpoint', () => {
 			expect(thread.comments[0].id).toEqual('comment-abc123');
 			expect(thread.comments[0].username).toEqual('alice');
 			expect(thread.comments[0].content).toEqual('a comment');
+			expect(thread.comments[0].likeCount).toEqual(2);
 			expect(thread.comments[1].id).toEqual('comment-abc234');
 			expect(thread.comments[1].username).toEqual('bob');
 			expect(thread.comments[1].content).toEqual('a comment 2');
+			expect(thread.comments[1].likeCount).toEqual(0);
 		});
 
 		it('should return response code 200 along with the response payload that contains a detailed thread with one comment removed', async () => {
@@ -1056,9 +1068,11 @@ describe('/threads endpoint', () => {
 			expect(thread.comments[0].id).toEqual('comment-abc123');
 			expect(thread.comments[0].username).toEqual('alice');
 			expect(thread.comments[0].content).toEqual('a comment');
+			expect(thread.comments[0].likeCount).toEqual(2);
 			expect(thread.comments[1].id).toEqual('comment-abc234');
 			expect(thread.comments[1].username).toEqual('bob');
 			expect(thread.comments[1].content).toEqual('**komentar telah dihapus**');
+			expect(thread.comments[1].likeCount).toEqual(0);
 		});
 	});
 });
