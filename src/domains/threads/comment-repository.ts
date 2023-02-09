@@ -27,7 +27,7 @@ export class CommentRepository {
 		throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 	}
 
-	async getTotalCommentLikesById(_commentId: string): Promise<number> {
+	async getTotalCommentLikesById(_commentId: string): Promise<[string, number]> {
 		throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 	}
 
