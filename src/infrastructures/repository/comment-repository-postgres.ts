@@ -66,10 +66,11 @@ export class CommentRepositoryPostgres extends CommentRepository {
 	}
 
 	async commentExists(commentId: string): Promise<boolean> {
-		const result = await this.#pool.query({
+		const query = {
 			text: 'SELECT id FROM comments WHERE id = $1',
 			values: [commentId],
-		});
+		};
+		const result = await this.#pool.query(query);
 
 		if (result.rowCount <= 0) {
 			return false;

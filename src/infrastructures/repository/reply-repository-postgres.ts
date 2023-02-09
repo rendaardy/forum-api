@@ -66,10 +66,11 @@ export class ReplyRepositoryPostgres extends ReplyRepository {
 	}
 
 	async replyExists(replyId: string): Promise<boolean> {
-		const result = await this.#pool.query({
+		const query = {
 			text: 'SELECT id FROM replies WHERE id = $1',
 			values: [replyId],
-		});
+		};
+		const result = await this.#pool.query(query);
 
 		if (result.rowCount <= 0) {
 			return false;
