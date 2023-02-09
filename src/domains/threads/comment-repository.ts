@@ -15,6 +15,18 @@ export class CommentRepository {
 		throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 	}
 
+	async likeComment(_userId: string, _commentId: string): Promise<void> {
+		throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+	}
+
+	async unlikeComment(_userId: string, _comment: string): Promise<void> {
+		throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+	}
+
+	async hasBeenLiked(_userId: string, _comment: string): Promise<boolean> {
+		throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+	}
+
 	async verifyCommentOwner(_userId: string, _commentId: string): Promise<void> {
 		throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
 	}
