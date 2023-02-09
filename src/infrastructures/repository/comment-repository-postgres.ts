@@ -83,12 +83,11 @@ export class CommentRepositoryPostgres extends CommentRepository {
 		const query = {
 			text: `
                 SELECT
-                    comment_id,
                     COUNT(comment_id) AS like_count
                 FROM
                     users_comments_likes
-                GROUP BY
-                    comment_id
+                WHERE
+                    comment_id = $1
             `,
 			values: [commentId],
 		};
