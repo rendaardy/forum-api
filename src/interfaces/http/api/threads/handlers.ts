@@ -40,6 +40,19 @@ export async function postCommentHandler(
 	}).code(201);
 }
 
+export async function putLikeCommentHandler(
+	request: Request,
+	_h: ResponseToolkit,
+): Promise<Lifecycle.ReturnValue> {
+	const {threadId, commentId} = request.params;
+	const {id: userId} = request.auth.credentials as AuthCredentials;
+	const {toggleLikeComment} = request.server.methods;
+
+	await toggleLikeComment(userId, threadId, commentId);
+
+	return {status: 'success'};
+}
+
 export async function deleteCommentHandler(
 	request: Request,
 	_h: ResponseToolkit,

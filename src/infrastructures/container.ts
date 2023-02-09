@@ -39,6 +39,7 @@ import {RemoveComment} from '#applications/usecase/remove-comment.ts';
 import {GetDetailedThread} from '#applications/usecase/get-detailed-thread.ts';
 import {AddReply} from '#applications/usecase/add-reply.ts';
 import {RemoveReply} from '#applications/usecase/remove-reply.ts';
+import {ToggleLikeComment} from '#applications/usecase/toggle-like-comment.ts';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 export const Types = {
@@ -82,6 +83,7 @@ helpers.annotate(RemoveComment, [ThreadRepository, CommentRepository]);
 helpers.annotate(GetDetailedThread, [ThreadRepository, CommentRepository, ReplyRepository]);
 helpers.annotate(AddReply, [ThreadRepository, CommentRepository, ReplyRepository]);
 helpers.annotate(RemoveReply, [ThreadRepository, CommentRepository, ReplyRepository]);
+helpers.annotate(ToggleLikeComment, [ThreadRepository, CommentRepository]);
 
 const thirdPartyModule = new ContainerModule(bind => {
 	bind(Types.Bcrypt).toConstantValue(bcrypt);
@@ -114,6 +116,7 @@ const applicationModule = new ContainerModule(bind => {
 	bind(GetDetailedThread).toSelf();
 	bind(AddReply).toSelf();
 	bind(RemoveReply).toSelf();
+	bind(ToggleLikeComment).toSelf();
 });
 
 export const container = new Container();
