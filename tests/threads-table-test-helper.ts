@@ -51,6 +51,19 @@ export class ThreadsTableTestHelper {
 		await pool.query(query);
 	}
 
+	static async likeComment({
+		id = 'likes-abc123',
+		userId = 'user-abc123',
+		commentId = 'comment-abc123',
+	}) {
+		const query = {
+			text: 'INSERT INTO users_comments_likes(id, user_id, comment_id) VALUES ($1, $2, $3)',
+			values: [id, userId, commentId],
+		};
+
+		await pool.query(query);
+	}
+
 	static async findThreadById(id: string) {
 		const query = {
 			text: 'SELECT id, title, body, date, user_id FROM threads WHERE id = $1',
@@ -81,6 +94,16 @@ export class ThreadsTableTestHelper {
 		return result.rows;
 	}
 
+	static async findUsersCommentsLikes(id: string) {
+		const query = {
+			text: 'SELECT id, user_id, comment_id FROM users_comments_likes WHERE id = $1',
+			values: [id],
+		};
+		const result = await pool.query(query);
+
+		return result.rows;
+	}
+
 	static async removeCommentById(id: string) {
 		await pool.query({
 			text: 'UPDATE comments SET is_deleted = true WHERE id = $1',
@@ -99,11 +122,16 @@ export class ThreadsTableTestHelper {
 		await pool.query('DELETE FROM comments');
 	}
 
+	static async removeUsersCommentsLikes() {
+		await pool.query('DELETE FROM users_comments_likes');
+	}
+
 	static async hardRemoveReplies() {
 		await pool.query('DELETE FROM replies');
 	}
 
 	static async clearTable() {
+		await pool.query('TRUNCATE TABLE users_comments_likes CASCADE');
 		await pool.query('TRUNCATE TABLE replies CASCADE');
 		await pool.query('TRUNCATE TABLE comments CASCADE');
 		await pool.query('TRUNCATE TABLE threads CASCADE');

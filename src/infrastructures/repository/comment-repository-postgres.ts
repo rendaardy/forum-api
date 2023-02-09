@@ -76,28 +76,24 @@ export class CommentRepositoryPostgres extends CommentRepository {
 		};
 		const result = await this.#pool.query(query);
 
-		return result.rowCount <= 0;
+		return result.rowCount > 0;
 	}
 
-	async getTotalCommentLikesById(commentId: string): Promise<[string, number]> {
+	async getAllTotalCommentLikes(): Promise<Array<[string, number]>> {
 		const query = {
 			text: `
                 SELECT
+                    comment_id,
                     COUNT(comment_id) AS like_count
                 FROM
                     users_comments_likes
-                WHERE
-                    comment_id = $1
+                GROUP BY
+                    comment_id
             `,
-			values: [commentId],
 		};
 		const result = await this.#pool.query(query);
 
-		if (result.rowCount <= 0) {
-			throw new NotFoundError('Comment not found');
-		}
-
-		return [commentId, result.rows[0].like_count as number];
+		return result.rows.map(it => [it.comment_id, Number(it.like_count)]) as Array<[string, number]>;
 	}
 
 	async verifyCommentOwner(userId: string, commentId: string): Promise<void> {
@@ -153,6 +149,7 @@ export class CommentRepositoryPostgres extends CommentRepository {
 			username: it.username,
 			date: it.date,
 			content: it.content,
+			likeCount: 0,
 			isDeleted: it.is_deleted as boolean,
 			replies: [],
 		}));
