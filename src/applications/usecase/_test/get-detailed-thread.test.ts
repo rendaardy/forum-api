@@ -23,6 +23,7 @@ describe('GetDetailedThread usecase', () => {
 					username: 'alice',
 					date: new Date(2022, 11, 11, 20, 30, 10),
 					content: 'a comment',
+					likeCount: 2,
 					replies: [
 						{
 							id: 'reply-123',
@@ -37,6 +38,7 @@ describe('GetDetailedThread usecase', () => {
 					username: 'bob',
 					date: new Date(2022, 11, 11, 23, 0, 5),
 					content: 'a comment 2',
+					likeCount: 0,
 					replies: [],
 				},
 			],
@@ -63,6 +65,7 @@ describe('GetDetailedThread usecase', () => {
 					username: 'alice',
 					date: new Date(2022, 11, 11, 20, 30, 10),
 					content: 'a comment',
+					likeCount: 2,
 					replies: [],
 				}),
 				new DetailedComment({
@@ -70,6 +73,7 @@ describe('GetDetailedThread usecase', () => {
 					username: 'bob',
 					date: new Date(2022, 11, 11, 23, 0, 5),
 					content: 'a comment 2',
+					likeCount: 0,
 					replies: [],
 				}),
 			]));
