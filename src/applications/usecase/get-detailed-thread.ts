@@ -27,16 +27,16 @@ export class GetDetailedThread {
 		const getTotalCommentLikes = await this.#commentRepository.getAllTotalCommentLikes();
 
 		for (const [i, comment] of Object.entries(detailedComments)) {
-			if (getReplies.length > 0) {
-				const [replyOwner, replies] = getReplies[Number(i)];
+			if (getReplies.at(Number(i))) {
+				const [replyOwner, replies] = getReplies.at(Number(i))!;
 
 				if (comment.id === replyOwner) {
 					comment.replies = replies;
 				}
 			}
 
-			if (getTotalCommentLikes.length > 0) {
-				const [commentOwner, totalLikes] = getTotalCommentLikes[Number(i)];
+			if (getTotalCommentLikes.at(Number(i))) {
+				const [commentOwner, totalLikes] = getTotalCommentLikes.at(Number(i))!;
 
 				if (comment.id === commentOwner) {
 					comment.likeCount = totalLikes;
