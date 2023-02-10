@@ -49,6 +49,53 @@ export class CommentRepositoryPostgres extends CommentRepository {
 		}
 	}
 
+	async likeComment(userId: string, commentId: string): Promise<void> {
+		const id = `likes-${this.#idGenerator()}`;
+		const query = {
+			text: `
+                INSERT INTO users_comments_likes(id, user_id, comment_id)
+                VALUES ($1, $2, $3)
+            `,
+			values: [id, userId, commentId],
+		};
+		await this.#pool.query(query);
+	}
+
+	async unlikeComment(userId: string, commentId: string): Promise<void> {
+		const query = {
+			text: 'DELETE FROM users_comments_likes WHERE user_id = $1 AND comment_id = $2',
+			values: [userId, commentId],
+		};
+		await this.#pool.query(query);
+	}
+
+	async hasBeenLiked(userId: string, commentId: string): Promise<boolean> {
+		const query = {
+			text: 'SELECT id FROM users_comments_likes WHERE user_id = $1 AND comment_id = $2',
+			values: [userId, commentId],
+		};
+		const result = await this.#pool.query(query);
+
+		return result.rowCount > 0;
+	}
+
+	async getAllTotalCommentLikes(): Promise<Array<[string, number]>> {
+		const query = {
+			text: `
+                SELECT
+                    comment_id,
+                    COUNT(comment_id) AS like_count
+                FROM
+                    users_comments_likes
+                GROUP BY
+                    comment_id
+            `,
+		};
+		const result = await this.#pool.query(query);
+
+		return result.rows.map(it => [it.comment_id, Number(it.like_count)]) as Array<[string, number]>;
+	}
+
 	async verifyCommentOwner(userId: string, commentId: string): Promise<void> {
 		const query = {
 			text: 'SELECT user_id FROM comments WHERE id = $1',
@@ -102,6 +149,7 @@ export class CommentRepositoryPostgres extends CommentRepository {
 			username: it.username,
 			date: it.date,
 			content: it.content,
+			likeCount: 0,
 			isDeleted: it.is_deleted as boolean,
 			replies: [],
 		}));

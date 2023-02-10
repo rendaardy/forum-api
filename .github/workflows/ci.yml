@@ -28,7 +28,7 @@ jobs:
         run: |
           pnpm install
           pnpm migrate up
-          pnpm test -- --verbose
+          pnpm test -- --maxWorkers=1 --verbose
         env:
           CI: true
           PGHOST_TEST: ${{ secrets.PGHOST_TEST }}

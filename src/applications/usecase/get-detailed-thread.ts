@@ -24,12 +24,19 @@ export class GetDetailedThread {
 		const getReplies = await Promise.all(
 			detailedComments.map(async it => this.#replyRepository.getAllDetailedRepliesFromComment(it.id)),
 		);
+		const getTotalCommentLikes = await this.#commentRepository.getAllTotalCommentLikes();
 
-		for (const [i, comment] of Object.entries(detailedComments)) {
-			const [replyOwner, replies] = getReplies[Number(i)];
+		for (const comment of detailedComments) {
+			for (const [replyOwner, replies] of getReplies) {
+				if (comment.id === replyOwner) {
+					comment.replies = replies;
+				}
+			}
 
-			if (comment.id === replyOwner) {
-				comment.replies = replies;
+			for (const [commentOwner, totalLikes] of getTotalCommentLikes) {
+				if (comment.id === commentOwner) {
+					comment.likeCount = totalLikes;
+				}
 			}
 		}
 

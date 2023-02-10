@@ -44,6 +44,7 @@ export const responseSchema = joi.object({
 					username: joi.string().required(),
 					date: joi.date().required(),
 					content: joi.string().required(),
+					likeCount: joi.number().integer().required(),
 					replies: joi.array().items(joi.object({
 						id: joi.string().required(),
 						username: joi.string().required(),

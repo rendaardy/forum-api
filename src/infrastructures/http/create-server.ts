@@ -76,7 +76,7 @@ export async function createServer(container: Container): Promise<Server> {
 			const translatedError = DomainErrorTranslator.translate(response);
 			// @ts-expect-error avoid type error
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-			request.logger.error(response.message);
+			request.logger.error(translatedError);
 
 			if (translatedError instanceof ClientError) {
 				const newResponse = h.response({

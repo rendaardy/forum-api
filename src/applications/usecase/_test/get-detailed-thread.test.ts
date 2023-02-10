@@ -23,6 +23,7 @@ describe('GetDetailedThread usecase', () => {
 					username: 'alice',
 					date: new Date(2022, 11, 11, 20, 30, 10),
 					content: 'a comment',
+					likeCount: 2,
 					replies: [
 						{
 							id: 'reply-123',
@@ -37,6 +38,7 @@ describe('GetDetailedThread usecase', () => {
 					username: 'bob',
 					date: new Date(2022, 11, 11, 23, 0, 5),
 					content: 'a comment 2',
+					likeCount: 0,
 					replies: [],
 				},
 			],
@@ -63,6 +65,7 @@ describe('GetDetailedThread usecase', () => {
 					username: 'alice',
 					date: new Date(2022, 11, 11, 20, 30, 10),
 					content: 'a comment',
+					likeCount: 2,
 					replies: [],
 				}),
 				new DetailedComment({
@@ -70,6 +73,7 @@ describe('GetDetailedThread usecase', () => {
 					username: 'bob',
 					date: new Date(2022, 11, 11, 23, 0, 5),
 					content: 'a comment 2',
+					likeCount: 0,
 					replies: [],
 				}),
 			]));
@@ -86,6 +90,12 @@ describe('GetDetailedThread usecase', () => {
 					}),
 				],
 			]));
+		mockCommentRepository.getAllTotalCommentLikes = jest
+			.fn<typeof mockCommentRepository.getAllTotalCommentLikes>()
+			.mockImplementation(async () => Promise.resolve([
+				['comment-123', 2],
+				['comment-345', 0],
+			]));
 
 		const getDetailedThread = new GetDetailedThread(
 			mockThreadRepository,
@@ -99,5 +109,6 @@ describe('GetDetailedThread usecase', () => {
 		expect(mockThreadRepository.getDetailedThread).toHaveBeenCalledWith(threadId);
 		expect(mockCommentRepository.getAllDetailedCommentsFromThread).toHaveBeenCalledWith(threadId);
 		expect(mockReplyRepository.getAllDetailedRepliesFromComment).toHaveBeenCalledTimes(2);
+		expect(mockCommentRepository.getAllTotalCommentLikes).toHaveBeenCalled();
 	});
 });

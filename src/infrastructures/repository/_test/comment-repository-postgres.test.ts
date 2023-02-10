@@ -109,6 +109,132 @@ describe('CommentRepositoryPostgres', () => {
 		});
 	});
 
+	describe('likeComment method', () => {
+		beforeEach(async () => {
+			await ThreadsTableTestHelper.addComment({
+				id: 'comment-abc123',
+				replyTo: 'thread-abc123',
+				content: 'a comment',
+				userId: 'user-abc234',
+			});
+		});
+
+		afterEach(async () => {
+			await ThreadsTableTestHelper.removeUsersCommentsLikes();
+			await ThreadsTableTestHelper.hardRemoveComments();
+		});
+
+		it('should like a comment successfully', async () => {
+			const commentRepository = new CommentRepositoryPostgres(pool, () => 'abc123');
+
+			await commentRepository.likeComment('user-abc123', 'comment-abc123');
+
+			const likes = await ThreadsTableTestHelper.findUsersCommentsLikes('likes-abc123');
+			expect(likes).toHaveLength(1);
+		});
+	});
+
+	describe('unlikeComment method', () => {
+		beforeEach(async () => {
+			await ThreadsTableTestHelper.addComment({
+				id: 'comment-abc123',
+				replyTo: 'thread-abc123',
+				content: 'a comment',
+				userId: 'user-abc234',
+			});
+		});
+
+		afterEach(async () => {
+			await ThreadsTableTestHelper.removeUsersCommentsLikes();
+			await ThreadsTableTestHelper.hardRemoveComments();
+		});
+
+		it('should unlike a comment successfully', async () => {
+			const commentRepository = new CommentRepositoryPostgres(pool, () => 'abc123');
+
+			await commentRepository.likeComment('user-abc123', 'comment-abc123');
+			await commentRepository.unlikeComment('user-abc123', 'comment-abc123');
+
+			const likes = await ThreadsTableTestHelper.findUsersCommentsLikes('likes-abc123');
+			expect(likes).toHaveLength(0);
+		});
+	});
+
+	describe('hasBeenLiked method', () => {
+		beforeEach(async () => {
+			await ThreadsTableTestHelper.addComment({
+				id: 'comment-abc123',
+				replyTo: 'thread-abc123',
+				content: 'a comment',
+				userId: 'user-abc234',
+			});
+		});
+
+		afterEach(async () => {
+			await ThreadsTableTestHelper.removeUsersCommentsLikes();
+			await ThreadsTableTestHelper.hardRemoveComments();
+		});
+
+		it('should return true when user has already liked the comment', async () => {
+			const commentRepository = new CommentRepositoryPostgres(pool, () => 'abc123');
+
+			await commentRepository.likeComment('user-abc123', 'comment-abc123');
+			const liked = await commentRepository.hasBeenLiked('user-abc123', 'comment-abc123');
+
+			expect(liked).toBeTruthy();
+		});
+
+		it('should return false when user hasn\'t liked the comment', async () => {
+			const commentRepository = new CommentRepositoryPostgres(pool, () => 'abc123');
+
+			const liked = await commentRepository.hasBeenLiked('user-abc123', 'comment-abc123');
+
+			expect(liked).toBeFalsy();
+		});
+	});
+
+	describe('getAllTotalCommentLikes method', () => {
+		beforeEach(async () => {
+			await ThreadsTableTestHelper.addComment({
+				id: 'comment-abc123',
+				replyTo: 'thread-abc123',
+				content: 'a comment',
+				userId: 'user-abc234',
+			});
+			await ThreadsTableTestHelper.addComment({
+				id: 'comment-abc234',
+				replyTo: 'thread-abc123',
+				content: 'a comment 2',
+				userId: 'user-abc123',
+			});
+			await ThreadsTableTestHelper.likeComment({
+				id: 'likes-abc123',
+				userId: 'user-abc123',
+				commentId: 'comment-abc123',
+			});
+			await ThreadsTableTestHelper.likeComment({
+				id: 'likes-abc234',
+				userId: 'user-abc234',
+				commentId: 'comment-abc123',
+			});
+		});
+
+		afterEach(async () => {
+			await ThreadsTableTestHelper.removeUsersCommentsLikes();
+			await ThreadsTableTestHelper.hardRemoveComments();
+		});
+
+		it('should return all total comment likes', async () => {
+			const commentRepository = new CommentRepositoryPostgres(pool, () => '');
+
+			const allTotalLikes = await commentRepository.getAllTotalCommentLikes();
+
+			expect(allTotalLikes).toHaveLength(1);
+			expect(allTotalLikes[0][0]).toEqual('comment-abc123');
+			expect(allTotalLikes[0][1]).toEqual(2);
+		});
+	});
+
 	describe('verifyCommentOwner method', () => {
 		beforeEach(async () => {
 			await ThreadsTableTestHelper.addComment({

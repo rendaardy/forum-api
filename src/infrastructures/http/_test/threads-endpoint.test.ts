@@ -809,6 +809,136 @@ describe('/threads endpoint', () => {
 		});
 	});
 
+	describe('PUT /threads/{threadId}/comments/{commentId}/likes', () => {
+		let accessToken = '';
+		let refreshToken = '';
+		let threadId: string;
+		let commentId: string;
+
+		beforeEach(async () => {
+			// Login with dicoding username
+			const authResponse = await server.inject({
+				url: '/authentications',
+				method: 'POST',
+				payload: {
+					username: 'dicoding',
+					password: 'secret_password',
+				},
+			});
+			const authJson = JSON.parse(authResponse.payload);
+			accessToken = authJson.data.accessToken;
+			refreshToken = authJson.data.refreshToken;
+
+			// Create a new thread using dicoding username
+			let response = await server.inject({
+				url: '/threads',
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+				payload: {
+					title: 'a thread',
+					body: 'a thread body',
+				},
+			});
+			let json = JSON.parse(response.payload);
+			threadId = json.data.addedThread.id;
+
+			// Create a new comment using dicoding username
+			response = await server.inject({
+				url: `/threads/${threadId}/comments`,
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+				payload: {
+					content: 'a comment',
+				},
+			});
+			json = JSON.parse(response.payload);
+			commentId = json.data.addedComment.id;
+		});
+
+		afterEach(async () => {
+			// Logout
+			await server.inject({
+				url: '/authentications',
+				method: 'DELETE',
+				payload: {
+					refreshToken,
+				},
+			});
+
+			accessToken = '';
+			refreshToken = '';
+			threadId = '';
+			commentId = '';
+		});
+
+		it('should return response code 401 when user tries to like a comment before authenticate itself', async () => {
+			const response = await server.inject({
+				url: `/threads/${threadId}/comments/${commentId}/likes`,
+				method: 'PUT',
+			});
+
+			expect(response.statusCode).toEqual(401);
+		});
+
+		it('should return response code 404 when user tries to like a comment on a non-existing thread', async () => {
+			const response = await server.inject({
+				url: `/threads/thread-abc/comments/${commentId}/likes`,
+				method: 'PUT',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			const json = JSON.parse(response.payload);
+			expect(json.status).toEqual('fail');
+			expect(json.message).toEqual('Thread not found');
+		});
+
+		it('should return response code 404 when user tries to like a comment on a non-existing comment', async () => {
+			const response = await server.inject({
+				url: `/threads/${threadId}/comments/comment-abc/likes`,
+				method: 'PUT',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			const json = JSON.parse(response.payload);
+			expect(json.status).toEqual('fail');
+			expect(json.message).toEqual('Comment not found');
+		});
+
+		it('should return response code 200 when user tries to like and unlike a comment', async () => {
+			let response = await server.inject({
+				url: `/threads/${threadId}/comments/${commentId}/likes`,
+				method: 'PUT',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			let json = JSON.parse(response.payload);
+			expect(response.statusCode).toEqual(200);
+			expect(json.status).toEqual('success');
+
+			response = await server.inject({
+				url: `/threads/${threadId}/comments/${commentId}/likes`,
+				method: 'PUT',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			json = JSON.parse(response.payload);
+			expect(response.statusCode).toEqual(200);
+			expect(json.status).toEqual('success');
+		});
+	});
+
 	describe('GET /threads/{threadId}', () => {
 		beforeEach(async () => {
 			await ThreadsTableTestHelper.clearTable();
@@ -858,6 +988,16 @@ describe('/threads endpoint', () => {
 				replyTo: 'thread-abc123',
 				content: 'a comment 2',
 			});
+			await ThreadsTableTestHelper.likeComment({
+				id: 'like-abc123',
+				userId: 'user-abc123',
+				commentId: 'comment-abc123',
+			});
+			await ThreadsTableTestHelper.likeComment({
+				id: 'like-abc234',
+				userId: 'user-abc234',
+				commentId: 'comment-abc123',
+			});
 		});
 
 		afterEach(async () => {
@@ -898,9 +1038,11 @@ describe('/threads endpoint', () => {
 			expect(thread.comments[0].id).toEqual('comment-abc123');
 			expect(thread.comments[0].username).toEqual('alice');
 			expect(thread.comments[0].content).toEqual('a comment');
+			expect(thread.comments[0].likeCount).toEqual(2);
 			expect(thread.comments[1].id).toEqual('comment-abc234');
 			expect(thread.comments[1].username).toEqual('bob');
 			expect(thread.comments[1].content).toEqual('a comment 2');
+			expect(thread.comments[1].likeCount).toEqual(0);
 		});
 
 		it('should return response code 200 along with the response payload that contains a detailed thread with one comment removed', async () => {
@@ -926,9 +1068,11 @@ describe('/threads endpoint', () => {
 			expect(thread.comments[0].id).toEqual('comment-abc123');
 			expect(thread.comments[0].username).toEqual('alice');
 			expect(thread.comments[0].content).toEqual('a comment');
+			expect(thread.comments[0].likeCount).toEqual(2);
 			expect(thread.comments[1].id).toEqual('comment-abc234');
 			expect(thread.comments[1].username).toEqual('bob');
 			expect(thread.comments[1].content).toEqual('**komentar telah dihapus**');
+			expect(thread.comments[1].likeCount).toEqual(0);
 		});
 	});
 });

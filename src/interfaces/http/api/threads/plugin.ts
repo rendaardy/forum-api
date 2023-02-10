@@ -8,6 +8,7 @@ import {RemoveComment} from '#applications/usecase/remove-comment.ts';
 import {GetDetailedThread} from '#applications/usecase/get-detailed-thread.ts';
 import {AddReply} from '#applications/usecase/add-reply.ts';
 import {RemoveReply} from '#applications/usecase/remove-reply.ts';
+import {ToggleLikeComment} from '#applications/usecase/toggle-like-comment.ts';
 import {
 	postThreadHandler,
 	postCommentHandler,
@@ -15,6 +16,7 @@ import {
 	getDetailedThreadHandler,
 	postReplyHandler,
 	deleteReplyHandler,
+	putLikeCommentHandler,
 } from './handlers.ts';
 import {responseSchema} from './schema.ts';
 
@@ -35,6 +37,7 @@ export const threadsPlugin: Plugin<ThreadsPluginOpts> = {
 		const getDetaildThread = container.get(GetDetailedThread);
 		const addReply = container.get(AddReply);
 		const removeReply = container.get(RemoveReply);
+		const toggleLikeComment = container.get(ToggleLikeComment);
 
 		server.method('addThread', addThread.execute, {bind: addThread});
 		server.method('addComment', addComment.execute, {bind: addComment});
@@ -42,6 +45,7 @@ export const threadsPlugin: Plugin<ThreadsPluginOpts> = {
 		server.method('getDetailedThread', getDetaildThread.execute, {bind: getDetaildThread});
 		server.method('addReply', addReply.execute, {bind: addReply});
 		server.method('removeReply', removeReply.execute, {bind: removeReply});
+		server.method('toggleLikeComment', toggleLikeComment.execute, {bind: toggleLikeComment});
 
 		server.route([
 			{
@@ -138,6 +142,23 @@ export const threadsPlugin: Plugin<ThreadsPluginOpts> = {
 					},
 				},
 			},
+			{
+				path: '/threads/{threadId}/comments/{commentId}/likes',
+				method: 'PUT',
+				handler: putLikeCommentHandler,
+				options: {
+					auth: 'forum-api_jwt',
+					validate: {
+						query: joi.object({
+							threadId: joi.string(),
+							commentId: joi.string(),
+						}),
+					},
+					response: {
+						schema: responseSchema,
+					},
+				},
+			},
 		]);
 	},
 };
@@ -150,5 +171,6 @@ declare module '@hapi/hapi' {
 		removeComment: typeof RemoveComment.prototype.execute;
 		removeReply: typeof RemoveReply.prototype.execute;
 		getDetailedThread: typeof GetDetailedThread.prototype.execute;
+		toggleLikeComment: typeof ToggleLikeComment.prototype.execute;
 	}
 }
