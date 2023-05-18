@@ -18,4 +18,5 @@ export default {
 		'^.+\\.[tj]sx?$': ['@swc/jest'],
 	},
 	watchman: false,
+  maxWorkers: 1,
 };
