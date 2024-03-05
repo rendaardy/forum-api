@@ -21,8 +21,8 @@
     "#applications/usecase/*.ts": "./src/applications/usecase/*.ts"
   },
   "scripts": {
-    "start": "node --loader ./swc-loader.mjs ./src/main.ts",
-    "start:dev": "node --loader ./swc-loader.mjs --watch --watch-preserve-output ./src/main.ts | pino-pretty",
+    "start": "node --import ./hooks/index.js ./src/main.ts",
+    "start:dev": "node --import ./hooks/index.js --watch --watch-preserve-output ./src/main.ts | pino-pretty",
     "migrate": "node-pg-migrate",
     "migrate:test": "node-pg-migrate -f ./config/database/test.json",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
